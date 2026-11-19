@@ -19,8 +19,9 @@
       "name": "Delhi (Narela)",
       "state": "Delhi",
       "region": "North",
-      "lat": 28.6139,
-      "lng": 77.209,
+      "lat": 28.6328,
+      "lng": 77.21977,
+      "coordsNote": "Verified with Nominatim (OSM relation/1942586); moved 2.35 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 200,
@@ -139,7 +140,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 938,
+      "distanceFromHomeKm": 940,
       "pros": "Big-city access",
       "watchOuts": "Worst air (200), outskirts location"
     },
@@ -148,8 +149,9 @@
       "name": "Kurukshetra",
       "state": "Haryana",
       "region": "North",
-      "lat": 29.9695,
-      "lng": 76.8783,
+      "lat": 29.96937,
+      "lng": 76.84828,
+      "coordsNote": "Verified with Nominatim (OSM node/245769169); moved 2.89 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 130,
@@ -263,7 +265,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 1059,
+      "distanceFromHomeKm": 1058,
       "pros": "Cheap small town; Chandigarh ~1.5 h",
       "watchOuts": "Stubble-burning season air; limited amenities"
     },
@@ -272,8 +274,9 @@
       "name": "Prayagraj",
       "state": "Uttar Pradesh",
       "region": "North",
-      "lat": 25.4358,
-      "lng": 81.8463,
+      "lat": 25.43813,
+      "lng": 81.8338,
+      "coordsNote": "Verified with Nominatim (OSM node/245733956); moved 1.28 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 85,
@@ -392,7 +395,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 1035,
+      "distanceFromHomeKm": 1034,
       "pros": "Very cheap, huge PG supply (coaching hub)",
       "watchOuts": "Nov–Jan smog, Magh Mela crowds, hot summers"
     },
@@ -401,8 +404,9 @@
       "name": "Bhopal",
       "state": "Madhya Pradesh",
       "region": "Central",
-      "lat": 23.2599,
-      "lng": 77.4126,
+      "lat": 23.25849,
+      "lng": 77.40199,
+      "coordsNote": "Verified with Nominatim (OSM node/245712627); moved 1.1 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 112,
@@ -521,7 +525,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 526,
+      "distanceFromHomeKm": 525,
       "pros": "Lakes, greenery, wide roads, affordable — best living standard of the list",
       "watchOuts": "Moderate air; worst in Nov"
     },
@@ -530,8 +534,9 @@
       "name": "Raipur",
       "state": "Chhattisgarh",
       "region": "Central",
-      "lat": 21.2514,
-      "lng": 81.6296,
+      "lat": 21.23809,
+      "lng": 81.6337,
+      "coordsNote": "Verified with Nominatim (OSM node/5308437250); moved 1.54 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 70,
@@ -659,8 +664,9 @@
       "name": "Patna",
       "state": "Bihar",
       "region": "East",
-      "lat": 25.5941,
-      "lng": 85.1376,
+      "lat": 25.60932,
+      "lng": 85.12353,
+      "coordsNote": "Verified with Nominatim (OSM relation/21860173); moved 2.2 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 131,
@@ -779,7 +785,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 1348,
+      "distanceFromHomeKm": 1347,
       "pros": "Central campus",
       "watchOuts": "Poor air (131), congestion"
     },
@@ -788,8 +794,9 @@
       "name": "Jamshedpur",
       "state": "Jharkhand",
       "region": "East",
-      "lat": 22.8046,
-      "lng": 86.2029,
+      "lat": 22.80152,
+      "lng": 86.20296,
+      "coordsNote": "Verified with Nominatim (OSM node/566174729); moved 0.34 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 110,
@@ -911,8 +918,9 @@
       "name": "Agartala",
       "state": "Tripura",
       "region": "NorthEast",
-      "lat": 23.8315,
-      "lng": 91.2868,
+      "lat": 23.83124,
+      "lng": 91.28238,
+      "coordsNote": "Verified with Nominatim (OSM node/245717374); moved 0.45 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 34,
@@ -1041,8 +1049,9 @@
       "name": "Shillong",
       "state": "Meghalaya",
       "region": "NorthEast",
-      "lat": 25.5788,
-      "lng": 91.8933,
+      "lat": 25.57599,
+      "lng": 91.88279,
+      "coordsNote": "Verified with Nominatim (OSM node/245735780); moved 1.1 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 14,
@@ -1161,7 +1170,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 2004,
+      "distanceFromHomeKm": 2003,
       "pros": "Cleanest air, scenic",
       "watchOuts": "Campus relocation uncertainty; rain; remote; pricier"
     },
@@ -1170,8 +1179,9 @@
       "name": "Warangal",
       "state": "Telangana",
       "region": "South",
-      "lat": 17.9689,
-      "lng": 79.5941,
+      "lat": 17.98206,
+      "lng": 79.5971,
+      "coordsNote": "Verified with Nominatim (OSM node/2885001475); moved 1.5 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 67.5,
@@ -1284,7 +1294,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 793,
+      "distanceFromHomeKm": 792,
       "summerMaxTempC": 42,
       "pros": "Cheap, calm, decent hospitals/malls in Hanamkonda; Hyderabad ~2.5–3 h",
       "watchOuts": "Small city, hot summers (42 °C+)"
@@ -1294,8 +1304,9 @@
       "name": "Tiruchirappalli (Trichy)",
       "state": "Tamil Nadu",
       "region": "South",
-      "lat": 10.7905,
-      "lng": 78.7047,
+      "lat": 10.80711,
+      "lng": 78.68809,
+      "coordsNote": "Verified with Nominatim (OSM relation/10318360); moved 2.59 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 62,
@@ -1414,7 +1425,7 @@
         "confidence": "estimate",
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
       },
-      "distanceFromHomeKm": 1313,
+      "distanceFromHomeKm": 1311,
       "pros": "Very clean air, cheap, good food; trains to Chennai/Bangalore",
       "watchOuts": "Campus ~20 km from city; Tamil helps; humid"
     },
@@ -1423,8 +1434,9 @@
       "name": "Vellore",
       "state": "Tamil Nadu",
       "region": "South",
-      "lat": 12.9165,
-      "lng": 79.1325,
+      "lat": 12.90718,
+      "lng": 79.13097,
+      "coordsNote": "Verified with Nominatim (OSM node/243713144); moved 1.05 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 67.5,
@@ -1538,15 +1550,16 @@
         "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites",
         "note": "Not in SPEC for this city; borrowed: running from trichy."
       },
-      "distanceFromHomeKm": 1136
+      "distanceFromHomeKm": 1137
     },
     {
       "id": "chennai-kelambakkam",
       "name": "Chennai (Kelambakkam, OMR)",
       "state": "Tamil Nadu",
       "region": "South",
-      "lat": 12.7867,
-      "lng": 80.2206,
+      "lat": 12.78714,
+      "lng": 80.21999,
+      "coordsNote": "Verified with Nominatim (OSM node/297473137); moved 0.08 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 80,
@@ -1675,8 +1688,9 @@
       "name": "Sehore (Kothri Kalan, VIT Bhopal)",
       "state": "Madhya Pradesh",
       "region": "Central",
-      "lat": 23.2032,
-      "lng": 77.0844,
+      "lat": 23.20492,
+      "lng": 77.08457,
+      "coordsNote": "Verified with Nominatim (OSM node/603686404); moved 0.19 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": 85,
@@ -1799,8 +1813,9 @@
       "name": "Gandhinagar",
       "state": "Gujarat",
       "region": "West",
-      "lat": 23.2156,
-      "lng": 72.6369,
+      "lat": 23.22329,
+      "lng": 72.64923,
+      "coordsNote": "Verified with Nominatim (OSM way/1104668864); moved 1.52 km from seed",
       "excluded": true,
       "annualAQI": {
         "value": null,
@@ -1808,7 +1823,7 @@
       },
       "livingScore": null,
       "costs": null,
-      "distanceFromHomeKm": 228,
+      "distanceFromHomeKm": 229,
       "watchOuts": "Excluded city (near Ahmedabad)"
     },
     {
@@ -1816,8 +1831,9 @@
       "name": "Diu",
       "state": "Dadra and Nagar Haveli and Daman and Diu",
       "region": "West",
-      "lat": 20.7144,
-      "lng": 70.9874,
+      "lat": 20.71378,
+      "lng": 70.98536,
+      "coordsNote": "Verified with Nominatim (OSM node/708952315); moved 0.22 km from seed",
       "excluded": false,
       "annualAQI": {
         "value": null,

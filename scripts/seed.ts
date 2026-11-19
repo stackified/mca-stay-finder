@@ -14,13 +14,39 @@ import {
   type CollegesFile,
   type LocalitiesFile,
 } from '../src/types/domain.ts'
+import { HOME_CITY, haversineKm } from '../src/lib/geo.ts'
 import { CITIES } from './seed/cities.ts'
 import { COLLEGES } from './seed/colleges.ts'
 import { LOCALITIES } from './seed/localities.ts'
 import { SOURCES } from './seed/util.ts'
+import { loadVerifiedCoords, type VerifiedCoords } from './seed/verified.ts'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 export const DATA_DIR = path.join(ROOT, 'public', 'data')
+
+/**
+ * Replaces seed coordinates with Nominatim-verified ones (scripts/geocode.ts) where they exist.
+ * Items without a verified point keep the seed point and a note saying it is approximate.
+ */
+function withVerifiedCoords<
+  T extends { id: string; lat: number; lng: number; coordsNote?: string },
+>(kind: 'college' | 'city' | 'locality', items: readonly T[], verified: VerifiedCoords): T[] {
+  return items.map((item) => {
+    const v = verified[`${kind}:${item.id}`]
+    if (!v) {
+      return {
+        ...item,
+        coordsNote: item.coordsNote ?? 'Approximate — not verified by Nominatim yet',
+      }
+    }
+    return {
+      ...item,
+      lat: v.lat,
+      lng: v.lng,
+      coordsNote: `Verified with Nominatim (OSM ${v.osm}); moved ${v.deltaKm} km from seed`,
+    }
+  })
+}
 
 export type SeedFiles = {
   'cities.json': CitiesFile
@@ -70,7 +96,18 @@ function checkIntegrity(files: SeedFiles): void {
 }
 
 /** Builds and validates all seed files. Pure: no disk access. */
-export function buildSeed(generatedAt = new Date().toISOString().slice(0, 10)): SeedFiles {
+export function buildSeed(
+  generatedAt = new Date().toISOString().slice(0, 10),
+  verified: VerifiedCoords = loadVerifiedCoords(),
+): SeedFiles {
+  // Distance from Surat is recomputed because verified city points can move.
+  const cities = withVerifiedCoords('city', CITIES, verified).map((c) => ({
+    ...c,
+    distanceFromHomeKm: Math.round(haversineKm(HOME_CITY, c)),
+  }))
+  const colleges = withVerifiedCoords('college', COLLEGES, verified)
+  const localities = withVerifiedCoords('locality', LOCALITIES, verified)
+
   const meta = (sources: string[], notes?: string[]) => ({
     generatedAt,
     generator: 'scripts/seed.ts',
@@ -87,18 +124,18 @@ export function buildSeed(generatedAt = new Date().toISOString().slice(0, 10)): 
           'distanceFromHomeKm is straight-line km from Surat city centre.',
         ],
       ),
-      data: CITIES,
+      data: cities,
     }),
     'colleges.json': CollegesFileSchema.parse({
       meta: meta(
         [SOURCES.seats, SOURCES.placements, SOURCES.vit, SOURCES.coords],
         ['VIT sub-scores are derived so default weights reproduce the manual final score in SPEC.'],
       ),
-      data: COLLEGES,
+      data: colleges,
     }),
     'localities.json': LocalitiesFileSchema.parse({
       meta: meta([SOURCES.costs, SOURCES.coords]),
-      data: LOCALITIES,
+      data: localities,
     }),
   }
   checkIntegrity(files)

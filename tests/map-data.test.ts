@@ -53,7 +53,8 @@ describe('citiesToAqiGeoJSON', () => {
 
   it('uses [lng, lat] order and band colours, with a text label', () => {
     const delhi = fc.features.find((f) => f.properties.id === 'delhi')!
-    expect(delhi.geometry.coordinates).toEqual([77.209, 28.6139])
+    const city = cities.find((c) => c.id === 'delhi')!
+    expect(delhi.geometry.coordinates).toEqual([city.lng, city.lat])
     expect(delhi.properties).toMatchObject({ aqi: 200, band: 'Moderate', color: '#ffd700' })
     expect(delhi.properties.label).toBe('Delhi\nAQI 200 · Moderate')
   })

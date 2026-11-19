@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc -b",
     "data:seed": "node scripts/seed.ts",
-    "data:check": "node scripts/seed.ts --check"
+    "data:check": "node scripts/seed.ts --check",
+    "data:geocode": "node scripts/geocode.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

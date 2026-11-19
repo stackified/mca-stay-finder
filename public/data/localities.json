@@ -14,6 +14,7 @@
       "name": "Fathima Nagar (NIT gate)",
       "lat": 17.99,
       "lng": 79.535,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 0,
         "max": 1
@@ -39,6 +40,7 @@
       "name": "Kazipet",
       "lat": 17.972,
       "lng": 79.502,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 2,
         "max": 3
@@ -64,6 +66,7 @@
       "name": "Hanamkonda (Subedari / Nakkalagutta)",
       "lat": 18.005,
       "lng": 79.56,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 4,
         "max": 6
@@ -87,8 +90,9 @@
       "id": "nitt-thuvakudi",
       "collegeId": "nit-trichy",
       "name": "Thuvakudi",
-      "lat": 10.753,
-      "lng": 78.829,
+      "lat": 10.74715,
+      "lng": 78.82141,
+      "coordsNote": "Verified with Nominatim (OSM node/9963924964); moved 1.05 km from seed",
       "distanceKm": {
         "min": 0,
         "max": 3
@@ -112,8 +116,9 @@
       "id": "nitt-thiruverumbur",
       "collegeId": "nit-trichy",
       "name": "Thiruverumbur / BHEL area",
-      "lat": 10.7765,
-      "lng": 78.7742,
+      "lat": 10.7913,
+      "lng": 78.7674,
+      "coordsNote": "Verified with Nominatim (OSM node/1669776022); moved 1.81 km from seed",
       "distanceKm": {
         "min": 7,
         "max": 10
@@ -137,8 +142,9 @@
       "id": "nitt-city",
       "collegeId": "nit-trichy",
       "name": "City (KK Nagar / Thillai Nagar)",
-      "lat": 10.826,
-      "lng": 78.684,
+      "lat": 10.75638,
+      "lng": 78.69105,
+      "coordsNote": "Verified with Nominatim (OSM node/6507644591); moved 7.78 km from seed",
       "distanceKm": {
         "min": 18,
         "max": 22
@@ -162,8 +168,9 @@
       "id": "mnnit-teliarganj",
       "collegeId": "mnnit-allahabad",
       "name": "Teliarganj",
-      "lat": 25.495,
-      "lng": 81.86,
+      "lat": 25.49794,
+      "lng": 81.85857,
+      "coordsNote": "Verified with Nominatim (OSM node/2042861536); moved 0.36 km from seed",
       "distanceKm": {
         "min": 0,
         "max": 1
@@ -189,6 +196,7 @@
       "name": "Shivkuti / Salori",
       "lat": 25.476,
       "lng": 81.866,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 2,
         "max": 4
@@ -212,8 +220,9 @@
       "id": "mnnit-civil-lines",
       "collegeId": "mnnit-allahabad",
       "name": "Civil Lines / Ashok Nagar",
-      "lat": 25.452,
-      "lng": 81.835,
+      "lat": 25.4523,
+      "lng": 81.83299,
+      "coordsNote": "Verified with Nominatim (OSM node/2042861533); moved 0.2 km from seed",
       "distanceKm": {
         "min": 4,
         "max": 6
@@ -239,6 +248,7 @@
       "name": "Adityapur",
       "lat": 22.784,
       "lng": 86.155,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 0,
         "max": 3
@@ -264,6 +274,7 @@
       "name": "Sonari / Kadma",
       "lat": 22.814,
       "lng": 86.17,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 4,
         "max": 7
@@ -289,6 +300,7 @@
       "name": "Bistupur / Sakchi",
       "lat": 22.7925,
       "lng": 86.1842,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 6,
         "max": 9
@@ -312,8 +324,9 @@
       "id": "manit-kotra",
       "collegeId": "manit-bhopal",
       "name": "Kotra / Mata Mandir",
-      "lat": 23.226,
-      "lng": 77.396,
+      "lat": 23.21844,
+      "lng": 77.39592,
+      "coordsNote": "Verified with Nominatim (OSM node/3682260829); moved 0.84 km from seed",
       "distanceKm": {
         "min": 0,
         "max": 2
@@ -337,8 +350,9 @@
       "id": "manit-arera",
       "collegeId": "manit-bhopal",
       "name": "Shivaji Nagar / TT Nagar / Arera Colony",
-      "lat": 23.22,
-      "lng": 77.428,
+      "lat": 23.22714,
+      "lng": 77.42217,
+      "coordsNote": "Verified with Nominatim (OSM way/488535551); moved 0.99 km from seed",
       "distanceKm": {
         "min": 2,
         "max": 5
@@ -364,6 +378,7 @@
       "name": "MP Nagar",
       "lat": 23.233,
       "lng": 77.434,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 4,
         "max": 6
@@ -389,6 +404,7 @@
       "name": "Daganiya / Kota / Rohinipuram",
       "lat": 21.245,
       "lng": 81.6,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 0,
         "max": 3
@@ -414,6 +430,7 @@
       "name": "Tatibandh / Amanaka",
       "lat": 21.255,
       "lng": 81.58,
+      "coordsNote": "Approximate — not verified by Nominatim yet",
       "distanceKm": {
         "min": 3,
         "max": 5
@@ -437,8 +454,9 @@
       "id": "nitrr-shankar-nagar",
       "collegeId": "nit-raipur",
       "name": "Shankar Nagar / Civil Lines",
-      "lat": 21.253,
-      "lng": 81.66,
+      "lat": 21.24727,
+      "lng": 81.66199,
+      "coordsNote": "Verified with Nominatim (OSM way/548809229); moved 0.67 km from seed",
       "distanceKm": {
         "min": 5,
         "max": 8

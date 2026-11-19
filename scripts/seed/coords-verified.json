@@ -1,0 +1,261 @@
+{
+  "college:nit-warangal": {
+    "lat": 17.98335,
+    "lng": 79.53352,
+    "osm": "way/469538078",
+    "query": "National Institute of Technology Warangal",
+    "deltaKm": 0.38
+  },
+  "college:nit-trichy": {
+    "lat": 10.76339,
+    "lng": 78.81503,
+    "osm": "way/100857261",
+    "query": "National Institute of Technology Tiruchirappalli",
+    "deltaKm": 0.54
+  },
+  "college:mnnit-allahabad": {
+    "lat": 25.49246,
+    "lng": 81.86387,
+    "osm": "way/208352956",
+    "query": "Motilal Nehru National Institute of Technology",
+    "deltaKm": 0.05
+  },
+  "college:nit-jamshedpur": {
+    "lat": 22.7759,
+    "lng": 86.1478,
+    "osm": "way/1038073929",
+    "query": "National Institute of Technology Jamshedpur",
+    "deltaKm": 0.41
+  },
+  "college:manit-bhopal": {
+    "lat": 23.21341,
+    "lng": 77.40454,
+    "osm": "way/360267597",
+    "query": "Maulana Azad National Institute of Technology",
+    "deltaKm": 0.47
+  },
+  "college:nit-raipur": {
+    "lat": 21.24894,
+    "lng": 81.60667,
+    "osm": "way/343167797",
+    "query": "NIT Raipur",
+    "deltaKm": 0.21
+  },
+  "college:nit-agartala": {
+    "lat": 23.84207,
+    "lng": 91.42472,
+    "osm": "way/656848959",
+    "query": "National Institute of Technology Agartala",
+    "deltaKm": 0.21
+  },
+  "college:nit-kurukshetra": {
+    "lat": 29.94575,
+    "lng": 76.81603,
+    "osm": "way/258374576",
+    "query": "National Institute of Technology Kurukshetra",
+    "deltaKm": 0.37
+  },
+  "college:nit-meghalaya": {
+    "lat": 25.57372,
+    "lng": 91.89422,
+    "osm": "node/9717158745",
+    "query": "National Institute of Technology Meghalaya",
+    "deltaKm": 0.49
+  },
+  "college:nit-delhi": {
+    "lat": 28.81389,
+    "lng": 77.13256,
+    "osm": "way/1463635805",
+    "query": "National Institute of Technology Delhi",
+    "deltaKm": 0.35
+  },
+  "college:vit-vellore": {
+    "lat": 12.96975,
+    "lng": 79.16066,
+    "osm": "relation/15931944",
+    "query": "Vellore Institute of Technology",
+    "deltaKm": 0.51
+  },
+  "college:vit-chennai": {
+    "lat": 12.84295,
+    "lng": 80.15541,
+    "osm": "way/336095563",
+    "query": "Vellore Institute of Technology Chennai",
+    "deltaKm": 0.34
+  },
+  "college:vit-bhopal": {
+    "lat": 23.07551,
+    "lng": 76.84978,
+    "osm": "node/9528736164",
+    "query": "VIT Bhopal University",
+    "deltaKm": 0.21
+  },
+  "city:delhi": {
+    "lat": 28.6328,
+    "lng": 77.21977,
+    "osm": "relation/1942586",
+    "query": "Delhi",
+    "deltaKm": 2.35
+  },
+  "city:kurukshetra": {
+    "lat": 29.96937,
+    "lng": 76.84828,
+    "osm": "node/245769169",
+    "query": "Kurukshetra, Haryana",
+    "deltaKm": 2.89
+  },
+  "city:prayagraj": {
+    "lat": 25.43813,
+    "lng": 81.8338,
+    "osm": "node/245733956",
+    "query": "Prayagraj, Uttar Pradesh",
+    "deltaKm": 1.28
+  },
+  "city:bhopal": {
+    "lat": 23.25849,
+    "lng": 77.40199,
+    "osm": "node/245712627",
+    "query": "Bhopal, Madhya Pradesh",
+    "deltaKm": 1.1
+  },
+  "city:raipur": {
+    "lat": 21.23809,
+    "lng": 81.6337,
+    "osm": "node/5308437250",
+    "query": "Raipur, Chhattisgarh",
+    "deltaKm": 1.54
+  },
+  "city:patna": {
+    "lat": 25.60932,
+    "lng": 85.12353,
+    "osm": "relation/21860173",
+    "query": "Patna, Bihar",
+    "deltaKm": 2.2
+  },
+  "city:jamshedpur": {
+    "lat": 22.80152,
+    "lng": 86.20296,
+    "osm": "node/566174729",
+    "query": "Jamshedpur, Jharkhand",
+    "deltaKm": 0.34
+  },
+  "city:agartala": {
+    "lat": 23.83124,
+    "lng": 91.28238,
+    "osm": "node/245717374",
+    "query": "Agartala, Tripura",
+    "deltaKm": 0.45
+  },
+  "city:shillong": {
+    "lat": 25.57599,
+    "lng": 91.88279,
+    "osm": "node/245735780",
+    "query": "Shillong, Meghalaya",
+    "deltaKm": 1.1
+  },
+  "city:warangal": {
+    "lat": 17.98206,
+    "lng": 79.5971,
+    "osm": "node/2885001475",
+    "query": "Warangal, Telangana",
+    "deltaKm": 1.5
+  },
+  "city:trichy": {
+    "lat": 10.80711,
+    "lng": 78.68809,
+    "osm": "relation/10318360",
+    "query": "Tiruchirappalli, Tamil Nadu",
+    "deltaKm": 2.59
+  },
+  "city:vellore": {
+    "lat": 12.90718,
+    "lng": 79.13097,
+    "osm": "node/243713144",
+    "query": "Vellore, Tamil Nadu",
+    "deltaKm": 1.05
+  },
+  "city:chennai-kelambakkam": {
+    "lat": 12.78714,
+    "lng": 80.21999,
+    "osm": "node/297473137",
+    "query": "Kelambakkam, Tamil Nadu",
+    "deltaKm": 0.08
+  },
+  "city:sehore": {
+    "lat": 23.20492,
+    "lng": 77.08457,
+    "osm": "node/603686404",
+    "query": "Sehore, Madhya Pradesh",
+    "deltaKm": 0.19
+  },
+  "city:gandhinagar": {
+    "lat": 23.22329,
+    "lng": 72.64923,
+    "osm": "way/1104668864",
+    "query": "Gandhinagar, Gujarat",
+    "deltaKm": 1.52
+  },
+  "city:diu": {
+    "lat": 20.71378,
+    "lng": 70.98536,
+    "osm": "node/708952315",
+    "query": "Diu",
+    "deltaKm": 0.22
+  },
+  "locality:nitt-thuvakudi": {
+    "lat": 10.74715,
+    "lng": 78.82141,
+    "osm": "node/9963924964",
+    "query": "Thuvakudi, Tiruchirappalli",
+    "deltaKm": 1.05
+  },
+  "locality:nitt-thiruverumbur": {
+    "lat": 10.7913,
+    "lng": 78.7674,
+    "osm": "node/1669776022",
+    "query": "Thiruverumbur, Tiruchirappalli",
+    "deltaKm": 1.81
+  },
+  "locality:nitt-city": {
+    "lat": 10.75638,
+    "lng": 78.69105,
+    "osm": "node/6507644591",
+    "query": "KK Nagar, Tiruchirappalli",
+    "deltaKm": 7.78
+  },
+  "locality:mnnit-teliarganj": {
+    "lat": 25.49794,
+    "lng": 81.85857,
+    "osm": "node/2042861536",
+    "query": "Teliarganj, Prayagraj",
+    "deltaKm": 0.36
+  },
+  "locality:mnnit-civil-lines": {
+    "lat": 25.4523,
+    "lng": 81.83299,
+    "osm": "node/2042861533",
+    "query": "Civil Lines, Prayagraj",
+    "deltaKm": 0.2
+  },
+  "locality:manit-kotra": {
+    "lat": 23.21844,
+    "lng": 77.39592,
+    "osm": "node/3682260829",
+    "query": "Kotra, Bhopal",
+    "deltaKm": 0.84
+  },
+  "locality:manit-arera": {
+    "lat": 23.22714,
+    "lng": 77.42217,
+    "osm": "way/488535551",
+    "query": "Shivaji Nagar, Bhopal",
+    "deltaKm": 0.99
+  },
+  "locality:nitrr-shankar-nagar": {
+    "lat": 21.24727,
+    "lng": 81.66199,
+    "osm": "way/548809229",
+    "query": "Shankar Nagar, Raipur",
+    "deltaKm": 0.67
+  }
+}
