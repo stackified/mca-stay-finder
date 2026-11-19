@@ -1,0 +1,462 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-19",
+    "generator": "scripts/seed.ts",
+    "sources": [
+      "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites",
+      "Approximate coordinates — verify with geocode.ts (Nominatim)"
+    ]
+  },
+  "data": [
+    {
+      "id": "nitw-fathima-nagar",
+      "collegeId": "nit-warangal",
+      "name": "Fathima Nagar (NIT gate)",
+      "lat": 17.99,
+      "lng": 79.535,
+      "distanceKm": {
+        "min": 0,
+        "max": 1
+      },
+      "vibe": "Student hub, walkable",
+      "pgDoubleAllIn": {
+        "min": 8500,
+        "max": 11000
+      },
+      "flat1bhkAllIn": {
+        "min": 14500,
+        "max": 20000
+      },
+      "bungalowAllIn": {
+        "min": 24000,
+        "max": 34000
+      },
+      "fit": "best"
+    },
+    {
+      "id": "nitw-kazipet",
+      "collegeId": "nit-warangal",
+      "name": "Kazipet",
+      "lat": 17.972,
+      "lng": 79.502,
+      "distanceKm": {
+        "min": 2,
+        "max": 3
+      },
+      "vibe": "Cheapest, railway junction",
+      "pgDoubleAllIn": {
+        "min": 8000,
+        "max": 10500
+      },
+      "flat1bhkAllIn": {
+        "min": 14000,
+        "max": 19000
+      },
+      "bungalowAllIn": {
+        "min": 23000,
+        "max": 32000
+      },
+      "fit": "budget"
+    },
+    {
+      "id": "nitw-hanamkonda",
+      "collegeId": "nit-warangal",
+      "name": "Hanamkonda (Subedari / Nakkalagutta)",
+      "lat": 18.005,
+      "lng": 79.56,
+      "distanceKm": {
+        "min": 4,
+        "max": 6
+      },
+      "vibe": "Best lifestyle in city",
+      "pgDoubleAllIn": {
+        "min": 9500,
+        "max": 12500
+      },
+      "flat1bhkAllIn": {
+        "min": 16000,
+        "max": 23500
+      },
+      "bungalowAllIn": {
+        "min": 27000,
+        "max": 40000
+      },
+      "fit": "comfort"
+    },
+    {
+      "id": "nitt-thuvakudi",
+      "collegeId": "nit-trichy",
+      "name": "Thuvakudi",
+      "lat": 10.753,
+      "lng": 78.829,
+      "distanceKm": {
+        "min": 0,
+        "max": 3
+      },
+      "vibe": "Quiet, limited options",
+      "pgDoubleAllIn": {
+        "min": 8500,
+        "max": 11000
+      },
+      "flat1bhkAllIn": {
+        "min": 14000,
+        "max": 19000
+      },
+      "bungalowAllIn": {
+        "min": 22000,
+        "max": 32000
+      },
+      "fit": "best"
+    },
+    {
+      "id": "nitt-thiruverumbur",
+      "collegeId": "nit-trichy",
+      "name": "Thiruverumbur / BHEL area",
+      "lat": 10.7765,
+      "lng": 78.7742,
+      "distanceKm": {
+        "min": 7,
+        "max": 10
+      },
+      "vibe": "Township feel",
+      "pgDoubleAllIn": {
+        "min": 9000,
+        "max": 12000
+      },
+      "flat1bhkAllIn": {
+        "min": 15000,
+        "max": 21000
+      },
+      "bungalowAllIn": {
+        "min": 24000,
+        "max": 36000
+      },
+      "fit": "ok"
+    },
+    {
+      "id": "nitt-city",
+      "collegeId": "nit-trichy",
+      "name": "City (KK Nagar / Thillai Nagar)",
+      "lat": 10.826,
+      "lng": 78.684,
+      "distanceKm": {
+        "min": 18,
+        "max": 22
+      },
+      "vibe": "Best amenities",
+      "pgDoubleAllIn": {
+        "min": 10000,
+        "max": 13500
+      },
+      "flat1bhkAllIn": {
+        "min": 18000,
+        "max": 24500
+      },
+      "bungalowAllIn": {
+        "min": 30000,
+        "max": 41500
+      },
+      "fit": "too-far"
+    },
+    {
+      "id": "mnnit-teliarganj",
+      "collegeId": "mnnit-allahabad",
+      "name": "Teliarganj",
+      "lat": 25.495,
+      "lng": 81.86,
+      "distanceKm": {
+        "min": 0,
+        "max": 1
+      },
+      "vibe": "Student hub, many PGs",
+      "pgDoubleAllIn": {
+        "min": 9000,
+        "max": 12500
+      },
+      "flat1bhkAllIn": {
+        "min": 15000,
+        "max": 22000
+      },
+      "bungalowAllIn": {
+        "min": 26000,
+        "max": 38000
+      },
+      "fit": "best"
+    },
+    {
+      "id": "mnnit-shivkuti-salori",
+      "collegeId": "mnnit-allahabad",
+      "name": "Shivkuti / Salori",
+      "lat": 25.476,
+      "lng": 81.866,
+      "distanceKm": {
+        "min": 2,
+        "max": 4
+      },
+      "vibe": "Cheapest",
+      "pgDoubleAllIn": {
+        "min": 8000,
+        "max": 11000
+      },
+      "flat1bhkAllIn": {
+        "min": 14500,
+        "max": 20000
+      },
+      "bungalowAllIn": {
+        "min": 24000,
+        "max": 34000
+      },
+      "fit": "budget"
+    },
+    {
+      "id": "mnnit-civil-lines",
+      "collegeId": "mnnit-allahabad",
+      "name": "Civil Lines / Ashok Nagar",
+      "lat": 25.452,
+      "lng": 81.835,
+      "distanceKm": {
+        "min": 4,
+        "max": 6
+      },
+      "vibe": "Best standard of living",
+      "pgDoubleAllIn": {
+        "min": 10500,
+        "max": 13500
+      },
+      "flat1bhkAllIn": {
+        "min": 18000,
+        "max": 25000
+      },
+      "bungalowAllIn": {
+        "min": 32000,
+        "max": 45000
+      },
+      "fit": "comfort"
+    },
+    {
+      "id": "nitjsr-adityapur",
+      "collegeId": "nit-jamshedpur",
+      "name": "Adityapur",
+      "lat": 22.784,
+      "lng": 86.155,
+      "distanceKm": {
+        "min": 0,
+        "max": 3
+      },
+      "vibe": "Cheapest, closest",
+      "pgDoubleAllIn": {
+        "min": 8000,
+        "max": 11000
+      },
+      "flat1bhkAllIn": {
+        "min": 15000,
+        "max": 20000
+      },
+      "bungalowAllIn": {
+        "min": 25000,
+        "max": 35000
+      },
+      "fit": "best"
+    },
+    {
+      "id": "nitjsr-sonari-kadma",
+      "collegeId": "nit-jamshedpur",
+      "name": "Sonari / Kadma",
+      "lat": 22.814,
+      "lng": 86.17,
+      "distanceKm": {
+        "min": 4,
+        "max": 7
+      },
+      "vibe": "Green Tata township",
+      "pgDoubleAllIn": {
+        "min": 9000,
+        "max": 12000
+      },
+      "flat1bhkAllIn": {
+        "min": 17000,
+        "max": 23000
+      },
+      "bungalowAllIn": {
+        "min": 30000,
+        "max": 42000
+      },
+      "fit": "comfort"
+    },
+    {
+      "id": "nitjsr-bistupur-sakchi",
+      "collegeId": "nit-jamshedpur",
+      "name": "Bistupur / Sakchi",
+      "lat": 22.7925,
+      "lng": 86.1842,
+      "distanceKm": {
+        "min": 6,
+        "max": 9
+      },
+      "vibe": "Main city, malls",
+      "pgDoubleAllIn": {
+        "min": 10000,
+        "max": 13000
+      },
+      "flat1bhkAllIn": {
+        "min": 18000,
+        "max": 25000
+      },
+      "bungalowAllIn": {
+        "min": 32000,
+        "max": 44000
+      },
+      "fit": "ok"
+    },
+    {
+      "id": "manit-kotra",
+      "collegeId": "manit-bhopal",
+      "name": "Kotra / Mata Mandir",
+      "lat": 23.226,
+      "lng": 77.396,
+      "distanceKm": {
+        "min": 0,
+        "max": 2
+      },
+      "vibe": "Student area",
+      "pgDoubleAllIn": {
+        "min": 9500,
+        "max": 12500
+      },
+      "flat1bhkAllIn": {
+        "min": 16000,
+        "max": 22000
+      },
+      "bungalowAllIn": {
+        "min": 28000,
+        "max": 40000
+      },
+      "fit": "best"
+    },
+    {
+      "id": "manit-arera",
+      "collegeId": "manit-bhopal",
+      "name": "Shivaji Nagar / TT Nagar / Arera Colony",
+      "lat": 23.22,
+      "lng": 77.428,
+      "distanceKm": {
+        "min": 2,
+        "max": 5
+      },
+      "vibe": "Upscale, green",
+      "pgDoubleAllIn": {
+        "min": 11000,
+        "max": 14000
+      },
+      "flat1bhkAllIn": {
+        "min": 19000,
+        "max": 26500
+      },
+      "bungalowAllIn": {
+        "min": 35000,
+        "max": 48500
+      },
+      "fit": "comfort"
+    },
+    {
+      "id": "manit-mp-nagar",
+      "collegeId": "manit-bhopal",
+      "name": "MP Nagar",
+      "lat": 23.233,
+      "lng": 77.434,
+      "distanceKm": {
+        "min": 4,
+        "max": 6
+      },
+      "vibe": "Commercial, many PGs",
+      "pgDoubleAllIn": {
+        "min": 10000,
+        "max": 13000
+      },
+      "flat1bhkAllIn": {
+        "min": 17000,
+        "max": 24000
+      },
+      "bungalowAllIn": {
+        "min": 30000,
+        "max": 42000
+      },
+      "fit": "ok"
+    },
+    {
+      "id": "nitrr-daganiya",
+      "collegeId": "nit-raipur",
+      "name": "Daganiya / Kota / Rohinipuram",
+      "lat": 21.245,
+      "lng": 81.6,
+      "distanceKm": {
+        "min": 0,
+        "max": 3
+      },
+      "vibe": "Student belt",
+      "pgDoubleAllIn": {
+        "min": 8500,
+        "max": 11000
+      },
+      "flat1bhkAllIn": {
+        "min": 15500,
+        "max": 21000
+      },
+      "bungalowAllIn": {
+        "min": 26000,
+        "max": 36000
+      },
+      "fit": "best"
+    },
+    {
+      "id": "nitrr-tatibandh",
+      "collegeId": "nit-raipur",
+      "name": "Tatibandh / Amanaka",
+      "lat": 21.255,
+      "lng": 81.58,
+      "distanceKm": {
+        "min": 3,
+        "max": 5
+      },
+      "vibe": "Cheaper, quieter",
+      "pgDoubleAllIn": {
+        "min": 8500,
+        "max": 11500
+      },
+      "flat1bhkAllIn": {
+        "min": 15500,
+        "max": 21000
+      },
+      "bungalowAllIn": {
+        "min": 26000,
+        "max": 36000
+      },
+      "fit": "budget"
+    },
+    {
+      "id": "nitrr-shankar-nagar",
+      "collegeId": "nit-raipur",
+      "name": "Shankar Nagar / Civil Lines",
+      "lat": 21.253,
+      "lng": 81.66,
+      "distanceKm": {
+        "min": 5,
+        "max": 8
+      },
+      "vibe": "Best standard of living",
+      "pgDoubleAllIn": {
+        "min": 10000,
+        "max": 13500
+      },
+      "flat1bhkAllIn": {
+        "min": 18000,
+        "max": 25500
+      },
+      "bungalowAllIn": {
+        "min": 32000,
+        "max": 44500
+      },
+      "fit": "comfort"
+    }
+  ]
+}

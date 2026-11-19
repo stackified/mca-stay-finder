@@ -1,0 +1,1832 @@
+{
+  "meta": {
+    "generatedAt": "2026-11-19",
+    "generator": "scripts/seed.ts",
+    "sources": [
+      "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+      "Smart Air 2025 least-polluted-cities list",
+      "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites",
+      "Research done in chat, Nov 2026 (SPEC §11)"
+    ],
+    "notes": [
+      "City coordinates are approximate city centres.",
+      "distanceFromHomeKm is straight-line km from Surat city centre."
+    ]
+  },
+  "data": [
+    {
+      "id": "delhi",
+      "name": "Delhi (Narela)",
+      "state": "Delhi",
+      "region": "North",
+      "lat": 28.6139,
+      "lng": 77.209,
+      "excluded": false,
+      "annualAQI": {
+        "value": 200,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "poorDaysPerYear": {
+        "value": 164,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Nov",
+      "livingScore": 5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 13500,
+          "max": 20500
+        },
+        "pgDoubleAllIn": {
+          "min": 11500,
+          "max": 16500
+        },
+        "flat1bhkAllIn": {
+          "min": 18300,
+          "max": 30800
+        },
+        "flat2bhkAllIn": {
+          "min": 22300,
+          "max": 36800
+        },
+        "bungalowAllIn": {
+          "min": 31300,
+          "max": 51800
+        },
+        "rent": {
+          "bhk1": {
+            "min": 7000,
+            "max": 11000
+          },
+          "bhk2": {
+            "min": 10000,
+            "max": 16000
+          },
+          "house3bhk": {
+            "min": 18000,
+            "max": 28000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 9000,
+            "max": 13000
+          },
+          "double": {
+            "min": 7000,
+            "max": 9000
+          },
+          "triple": {
+            "min": 5500,
+            "max": 7000
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 800,
+            "max": 2000
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2000
+          },
+          "misc": {
+            "min": 2500,
+            "max": 3500
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 1000,
+            "max": 2500
+          },
+          "waterMaint": {
+            "min": 300,
+            "max": 1000
+          },
+          "wifi": {
+            "min": 500,
+            "max": 800
+          },
+          "food": {
+            "min": 4500,
+            "max": 6500
+          },
+          "maidCook": {
+            "min": 2000,
+            "max": 3500
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2000
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3500
+          }
+        },
+        "runningTotal": {
+          "min": 11300,
+          "max": 19800
+        },
+        "depositMonths": "2â€“3 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "~1 month",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 938,
+      "pros": "Big-city access",
+      "watchOuts": "Worst air (200), outskirts location"
+    },
+    {
+      "id": "kurukshetra",
+      "name": "Kurukshetra",
+      "state": "Haryana",
+      "region": "North",
+      "lat": 29.9695,
+      "lng": 76.8783,
+      "excluded": false,
+      "annualAQI": {
+        "value": 130,
+        "source": "Research done in chat, Nov 2026 (SPEC §11)",
+        "asOf": "2025",
+        "confidence": "estimate",
+        "note": "Estimated range 120â€“140; midpoint stored."
+      },
+      "worstMonth": "Octâ€“Dec (stubble burning)",
+      "livingScore": 6,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 10500,
+          "max": 15500
+        },
+        "pgDoubleAllIn": {
+          "min": 8500,
+          "max": 12500
+        },
+        "flat1bhkAllIn": {
+          "min": 15200,
+          "max": 23900
+        },
+        "flat2bhkAllIn": {
+          "min": 18200,
+          "max": 28900
+        },
+        "bungalowAllIn": {
+          "min": 25200,
+          "max": 40900
+        },
+        "rent": {
+          "bhk1": {
+            "min": 6000,
+            "max": 9000
+          },
+          "bhk2": {
+            "min": 8000,
+            "max": 13000
+          },
+          "house3bhk": {
+            "min": 14000,
+            "max": 22000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 7000,
+            "max": 10000
+          },
+          "double": {
+            "min": 5000,
+            "max": 7000
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 700,
+            "max": 1500
+          },
+          "transport": {
+            "min": 600,
+            "max": 1200
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 900,
+            "max": 2000
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 500
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 5500
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 600,
+            "max": 1200
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9200,
+          "max": 14900
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 1059,
+      "pros": "Cheap small town; Chandigarh ~1.5 h",
+      "watchOuts": "Stubble-burning season air; limited amenities"
+    },
+    {
+      "id": "prayagraj",
+      "name": "Prayagraj",
+      "state": "Uttar Pradesh",
+      "region": "North",
+      "lat": 25.4358,
+      "lng": 81.8463,
+      "excluded": false,
+      "annualAQI": {
+        "value": 85,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "poorDaysPerYear": {
+        "value": 7,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Nov",
+      "livingScore": 7.5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 10500,
+          "max": 16500
+        },
+        "pgDoubleAllIn": {
+          "min": 8500,
+          "max": 13500
+        },
+        "flat1bhkAllIn": {
+          "min": 15500,
+          "max": 24700
+        },
+        "flat2bhkAllIn": {
+          "min": 19500,
+          "max": 30700
+        },
+        "bungalowAllIn": {
+          "min": 26500,
+          "max": 44700
+        },
+        "rent": {
+          "bhk1": {
+            "min": 6000,
+            "max": 9000
+          },
+          "bhk2": {
+            "min": 9000,
+            "max": 14000
+          },
+          "house3bhk": {
+            "min": 15000,
+            "max": 25000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 7000,
+            "max": 10000
+          },
+          "double": {
+            "min": 5000,
+            "max": 7000
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 800,
+            "max": 2000
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 1000,
+            "max": 2500
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 500
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 5500
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9500,
+          "max": 15700
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 1035,
+      "pros": "Very cheap, huge PG supply (coaching hub)",
+      "watchOuts": "Novâ€“Jan smog, Magh Mela crowds, hot summers"
+    },
+    {
+      "id": "bhopal",
+      "name": "Bhopal",
+      "state": "Madhya Pradesh",
+      "region": "Central",
+      "lat": 23.2599,
+      "lng": 77.4126,
+      "excluded": false,
+      "annualAQI": {
+        "value": 112,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "poorDaysPerYear": {
+        "value": 29,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Nov",
+      "livingScore": 8.5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 11500,
+          "max": 18000
+        },
+        "pgDoubleAllIn": {
+          "min": 9500,
+          "max": 14000
+        },
+        "flat1bhkAllIn": {
+          "min": 16500,
+          "max": 26500
+        },
+        "flat2bhkAllIn": {
+          "min": 20500,
+          "max": 32500
+        },
+        "bungalowAllIn": {
+          "min": 29500,
+          "max": 48500
+        },
+        "rent": {
+          "bhk1": {
+            "min": 7000,
+            "max": 10000
+          },
+          "bhk2": {
+            "min": 10000,
+            "max": 15000
+          },
+          "house3bhk": {
+            "min": 18000,
+            "max": 28000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 8000,
+            "max": 12000
+          },
+          "double": {
+            "min": 6000,
+            "max": 8000
+          },
+          "triple": {
+            "min": 5000,
+            "max": 6500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 600,
+            "max": 1500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 900,
+            "max": 2000
+          },
+          "waterMaint": {
+            "min": 300,
+            "max": 800
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 6000
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 3000
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9500,
+          "max": 16500
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "~Â½ month",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 526,
+      "pros": "Lakes, greenery, wide roads, affordable â€” best living standard of the list",
+      "watchOuts": "Moderate air; worst in Nov"
+    },
+    {
+      "id": "raipur",
+      "name": "Raipur",
+      "state": "Chhattisgarh",
+      "region": "Central",
+      "lat": 21.2514,
+      "lng": 81.6296,
+      "excluded": false,
+      "annualAQI": {
+        "value": 70,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "poorDaysPerYear": {
+        "value": 0,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Jan",
+      "livingScore": 7,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 10500,
+          "max": 16500
+        },
+        "pgDoubleAllIn": {
+          "min": 8500,
+          "max": 13500
+        },
+        "flat1bhkAllIn": {
+          "min": 16400,
+          "max": 25500
+        },
+        "flat2bhkAllIn": {
+          "min": 20400,
+          "max": 31500
+        },
+        "bungalowAllIn": {
+          "min": 27400,
+          "max": 44500
+        },
+        "rent": {
+          "bhk1": {
+            "min": 7000,
+            "max": 10000
+          },
+          "bhk2": {
+            "min": 10000,
+            "max": 15000
+          },
+          "house3bhk": {
+            "min": 16000,
+            "max": 25000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 7000,
+            "max": 10000
+          },
+          "double": {
+            "min": 5000,
+            "max": 7000
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 800,
+            "max": 2000
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 900,
+            "max": 2200
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 600
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 5500
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9400,
+          "max": 15500
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 912,
+      "pros": "Cheap, satisfactory air year-round; Naya Raipur well planned",
+      "watchOuts": "Weak MCA placements; very hot summers"
+    },
+    {
+      "id": "patna",
+      "name": "Patna",
+      "state": "Bihar",
+      "region": "East",
+      "lat": 25.5941,
+      "lng": 85.1376,
+      "excluded": false,
+      "annualAQI": {
+        "value": 131,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "poorDaysPerYear": {
+        "value": 54,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Jan",
+      "livingScore": 5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 11500,
+          "max": 17500
+        },
+        "pgDoubleAllIn": {
+          "min": 9500,
+          "max": 14500
+        },
+        "flat1bhkAllIn": {
+          "min": 17500,
+          "max": 28300
+        },
+        "flat2bhkAllIn": {
+          "min": 22500,
+          "max": 35300
+        },
+        "bungalowAllIn": {
+          "min": 31500,
+          "max": 50300
+        },
+        "rent": {
+          "bhk1": {
+            "min": 8000,
+            "max": 12000
+          },
+          "bhk2": {
+            "min": 12000,
+            "max": 18000
+          },
+          "house3bhk": {
+            "min": 20000,
+            "max": 30000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 8000,
+            "max": 11000
+          },
+          "double": {
+            "min": 6000,
+            "max": 8000
+          },
+          "triple": {
+            "min": 4500,
+            "max": 6000
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 800,
+            "max": 2000
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 1000,
+            "max": 2500
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 600
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 6000
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9500,
+          "max": 16300
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "~Â½â€“1 month",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 1348,
+      "pros": "Central campus",
+      "watchOuts": "Poor air (131), congestion"
+    },
+    {
+      "id": "jamshedpur",
+      "name": "Jamshedpur",
+      "state": "Jharkhand",
+      "region": "East",
+      "lat": 22.8046,
+      "lng": 86.2029,
+      "excluded": false,
+      "annualAQI": {
+        "value": 110,
+        "source": "Research done in chat, Nov 2026 (SPEC §11)",
+        "asOf": "2025",
+        "confidence": "estimate",
+        "note": "Estimated range 100â€“120; midpoint stored."
+      },
+      "livingScore": 8,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 10500,
+          "max": 16000
+        },
+        "pgDoubleAllIn": {
+          "min": 8500,
+          "max": 13000
+        },
+        "flat1bhkAllIn": {
+          "min": 16300,
+          "max": 25100
+        },
+        "flat2bhkAllIn": {
+          "min": 20300,
+          "max": 31100
+        },
+        "bungalowAllIn": {
+          "min": 27300,
+          "max": 44100
+        },
+        "rent": {
+          "bhk1": {
+            "min": 7000,
+            "max": 10000
+          },
+          "bhk2": {
+            "min": 10000,
+            "max": 15000
+          },
+          "house3bhk": {
+            "min": 16000,
+            "max": 25000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 7000,
+            "max": 10000
+          },
+          "double": {
+            "min": 5000,
+            "max": 7000
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 600,
+            "max": 1500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 800,
+            "max": 1800
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 600
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 5500
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9300,
+          "max": 15100
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 1390,
+      "pros": "One of India's best-planned cities; clean, safe, reliable utilities",
+      "watchOuts": "Steel-city air; more service-company recruiters"
+    },
+    {
+      "id": "agartala",
+      "name": "Agartala",
+      "state": "Tripura",
+      "region": "NorthEast",
+      "lat": 23.8315,
+      "lng": 91.2868,
+      "excluded": false,
+      "annualAQI": {
+        "value": 34,
+        "source": "Smart Air 2025 least-polluted-cities list",
+        "asOf": "2025",
+        "confidence": "aggregator",
+        "note": "Derived from annual mean PM2.5 20.3 Âµg/mÂ³ with the NAQI PM2.5 bands (24-h bands applied to an annual mean â€” approximate)."
+      },
+      "pm25Annual": {
+        "value": 20.3,
+        "source": "Smart Air 2025 least-polluted-cities list",
+        "asOf": "2025",
+        "confidence": "aggregator"
+      },
+      "worstMonth": "Winter",
+      "livingScore": 5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 11000,
+          "max": 17000
+        },
+        "pgDoubleAllIn": {
+          "min": 9000,
+          "max": 14000
+        },
+        "flat1bhkAllIn": {
+          "min": 16000,
+          "max": 24700
+        },
+        "flat2bhkAllIn": {
+          "min": 20000,
+          "max": 30700
+        },
+        "bungalowAllIn": {
+          "min": 27000,
+          "max": 41700
+        },
+        "rent": {
+          "bhk1": {
+            "min": 6000,
+            "max": 9000
+          },
+          "bhk2": {
+            "min": 9000,
+            "max": 14000
+          },
+          "house3bhk": {
+            "min": 15000,
+            "max": 22000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 7000,
+            "max": 10000
+          },
+          "double": {
+            "min": 5000,
+            "max": 7000
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 500,
+            "max": 1200
+          },
+          "transport": {
+            "min": 1500,
+            "max": 2500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 800,
+            "max": 1500
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 500
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 5500
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 1500,
+            "max": 2500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 10000,
+          "max": 15700
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 1917,
+      "pros": "Clean air",
+      "watchOuts": "Remote; campus ~20 km out; flights needed"
+    },
+    {
+      "id": "shillong",
+      "name": "Shillong",
+      "state": "Meghalaya",
+      "region": "NorthEast",
+      "lat": 25.5788,
+      "lng": 91.8933,
+      "excluded": false,
+      "annualAQI": {
+        "value": 14,
+        "source": "Smart Air 2025 least-polluted-cities list",
+        "asOf": "2025",
+        "confidence": "aggregator",
+        "note": "Derived from annual mean PM2.5 8.5 Âµg/mÂ³ with the NAQI PM2.5 bands (24-h bands applied to an annual mean â€” approximate)."
+      },
+      "pm25Annual": {
+        "value": 8.5,
+        "source": "Smart Air 2025 least-polluted-cities list",
+        "asOf": "2025",
+        "confidence": "aggregator"
+      },
+      "livingScore": 6,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 13500,
+          "max": 20500
+        },
+        "pgDoubleAllIn": {
+          "min": 11500,
+          "max": 16500
+        },
+        "flat1bhkAllIn": {
+          "min": 20600,
+          "max": 31700
+        },
+        "flat2bhkAllIn": {
+          "min": 25600,
+          "max": 39700
+        },
+        "bungalowAllIn": {
+          "min": 35600,
+          "max": 57700
+        },
+        "rent": {
+          "bhk1": {
+            "min": 9000,
+            "max": 13000
+          },
+          "bhk2": {
+            "min": 13000,
+            "max": 20000
+          },
+          "house3bhk": {
+            "min": 22000,
+            "max": 35000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 9000,
+            "max": 13000
+          },
+          "double": {
+            "min": 7000,
+            "max": 9000
+          },
+          "triple": {
+            "min": 5500,
+            "max": 7000
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 400,
+            "max": 1000
+          },
+          "transport": {
+            "min": 1500,
+            "max": 3000
+          },
+          "misc": {
+            "min": 2500,
+            "max": 3500
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 700,
+            "max": 1500
+          },
+          "waterMaint": {
+            "min": 300,
+            "max": 800
+          },
+          "wifi": {
+            "min": 600,
+            "max": 900
+          },
+          "food": {
+            "min": 4500,
+            "max": 6500
+          },
+          "maidCook": {
+            "min": 2000,
+            "max": 3000
+          },
+          "transport": {
+            "min": 1500,
+            "max": 3000
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "runningTotal": {
+          "min": 11600,
+          "max": 18700
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 2004,
+      "pros": "Cleanest air, scenic",
+      "watchOuts": "Campus relocation uncertainty; rain; remote; pricier"
+    },
+    {
+      "id": "warangal",
+      "name": "Warangal",
+      "state": "Telangana",
+      "region": "South",
+      "lat": 17.9689,
+      "lng": 79.5941,
+      "excluded": false,
+      "annualAQI": {
+        "value": 67.5,
+        "source": "Research done in chat, Nov 2026 (SPEC §11)",
+        "asOf": "2025",
+        "confidence": "estimate",
+        "note": "Estimated range 60â€“75; midpoint stored."
+      },
+      "livingScore": 7,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 10000,
+          "max": 15000
+        },
+        "pgDoubleAllIn": {
+          "min": 8500,
+          "max": 12500
+        },
+        "flat1bhkAllIn": {
+          "min": 14800,
+          "max": 23500
+        },
+        "flat2bhkAllIn": {
+          "min": 18800,
+          "max": 28500
+        },
+        "bungalowAllIn": {
+          "min": 24800,
+          "max": 40500
+        },
+        "rent": {
+          "bhk1": {
+            "min": 6000,
+            "max": 9000
+          },
+          "bhk2": {
+            "min": 9000,
+            "max": 13000
+          },
+          "house3bhk": {
+            "min": 14000,
+            "max": 22000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 6500,
+            "max": 9000
+          },
+          "double": {
+            "min": 5000,
+            "max": 6500
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5000
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 600,
+            "max": 1500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 800,
+            "max": 1800
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 500
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 3500,
+            "max": 5000
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 8800,
+          "max": 14500
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 793,
+      "summerMaxTempC": 42,
+      "pros": "Cheap, calm, decent hospitals/malls in Hanamkonda; Hyderabad ~2.5â€“3 h",
+      "watchOuts": "Small city, hot summers (42 Â°C+)"
+    },
+    {
+      "id": "trichy",
+      "name": "Tiruchirappalli (Trichy)",
+      "state": "Tamil Nadu",
+      "region": "South",
+      "lat": 10.7905,
+      "lng": 78.7047,
+      "excluded": false,
+      "annualAQI": {
+        "value": 62,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "poorDaysPerYear": {
+        "value": 1,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Mar",
+      "livingScore": 6.5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 10500,
+          "max": 16500
+        },
+        "pgDoubleAllIn": {
+          "min": 8500,
+          "max": 13500
+        },
+        "flat1bhkAllIn": {
+          "min": 15000,
+          "max": 24300
+        },
+        "flat2bhkAllIn": {
+          "min": 19000,
+          "max": 30300
+        },
+        "bungalowAllIn": {
+          "min": 25000,
+          "max": 41300
+        },
+        "rent": {
+          "bhk1": {
+            "min": 6000,
+            "max": 9000
+          },
+          "bhk2": {
+            "min": 9000,
+            "max": 14000
+          },
+          "house3bhk": {
+            "min": 14000,
+            "max": 22000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 7000,
+            "max": 10000
+          },
+          "double": {
+            "min": 5000,
+            "max": 7000
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 600,
+            "max": 1500
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2000
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 800,
+            "max": 2000
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 600
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 3500,
+            "max": 5000
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2000
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9000,
+          "max": 15300
+        },
+        "depositMonths": "2â€“3 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites"
+      },
+      "distanceFromHomeKm": 1313,
+      "pros": "Very clean air, cheap, good food; trains to Chennai/Bangalore",
+      "watchOuts": "Campus ~20 km from city; Tamil helps; humid"
+    },
+    {
+      "id": "vellore",
+      "name": "Vellore",
+      "state": "Tamil Nadu",
+      "region": "South",
+      "lat": 12.9165,
+      "lng": 79.1325,
+      "excluded": false,
+      "annualAQI": {
+        "value": 67.5,
+        "source": "Research done in chat, Nov 2026 (SPEC §11)",
+        "asOf": "2025",
+        "confidence": "estimate",
+        "note": "Estimated range 60â€“75; midpoint stored."
+      },
+      "livingScore": 6.5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 9500,
+          "max": 15000
+        },
+        "pgDoubleAllIn": {
+          "min": 8000,
+          "max": 12500
+        },
+        "flat1bhkAllIn": {
+          "min": 14000,
+          "max": 23300
+        },
+        "flat2bhkAllIn": {
+          "min": 18000,
+          "max": 28300
+        },
+        "bungalowAllIn": {
+          "min": 24000,
+          "max": 39300
+        },
+        "rent": {
+          "bhk1": {
+            "min": 5000,
+            "max": 8000
+          },
+          "bhk2": {
+            "min": 8000,
+            "max": 12000
+          },
+          "house3bhk": {
+            "min": 13000,
+            "max": 20000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 6000,
+            "max": 9000
+          },
+          "double": {
+            "min": 4500,
+            "max": 6500
+          },
+          "triple": {
+            "min": 4000,
+            "max": 5000
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 600,
+            "max": 1500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 800,
+            "max": 2000
+          },
+          "waterMaint": {
+            "min": 200,
+            "max": 600
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 3500,
+            "max": 5000
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 2500
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2000
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9000,
+          "max": 15300
+        },
+        "depositMonths": "2â€“3 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "Rare",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites",
+        "note": "Not in SPEC for this city; borrowed: running from trichy."
+      },
+      "distanceFromHomeKm": 1136
+    },
+    {
+      "id": "chennai-kelambakkam",
+      "name": "Chennai (Kelambakkam, OMR)",
+      "state": "Tamil Nadu",
+      "region": "South",
+      "lat": 12.7867,
+      "lng": 80.2206,
+      "excluded": false,
+      "annualAQI": {
+        "value": 80,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official",
+        "note": "Chennai city figure; Kelambakkam is on the southern edge."
+      },
+      "poorDaysPerYear": {
+        "value": 0,
+        "source": "CPCB daily AQI bulletins 2025, aggregated (via helloboon.com/air-quality)",
+        "asOf": "2025",
+        "confidence": "official"
+      },
+      "worstMonth": "Dec",
+      "livingScore": 7.5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 13500,
+          "max": 21000
+        },
+        "pgDoubleAllIn": {
+          "min": 11500,
+          "max": 17500
+        },
+        "flat1bhkAllIn": {
+          "min": 20300,
+          "max": 32800
+        },
+        "flat2bhkAllIn": {
+          "min": 25300,
+          "max": 39800
+        },
+        "bungalowAllIn": {
+          "min": 35300,
+          "max": 55800
+        },
+        "rent": {
+          "bhk1": {
+            "min": 9000,
+            "max": 13000
+          },
+          "bhk2": {
+            "min": 13000,
+            "max": 19000
+          },
+          "house3bhk": {
+            "min": 22000,
+            "max": 32000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 9000,
+            "max": 13000
+          },
+          "double": {
+            "min": 7000,
+            "max": 9500
+          },
+          "triple": {
+            "min": 5500,
+            "max": 7000
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 800,
+            "max": 2000
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2500
+          },
+          "misc": {
+            "min": 2500,
+            "max": 3500
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 1000,
+            "max": 2500
+          },
+          "waterMaint": {
+            "min": 300,
+            "max": 1000
+          },
+          "wifi": {
+            "min": 500,
+            "max": 800
+          },
+          "food": {
+            "min": 4500,
+            "max": 6500
+          },
+          "maidCook": {
+            "min": 2000,
+            "max": 3500
+          },
+          "transport": {
+            "min": 1000,
+            "max": 2000
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3500
+          }
+        },
+        "runningTotal": {
+          "min": 11300,
+          "max": 19800
+        },
+        "depositMonths": "3â€“5 months",
+        "pgDepositMonths": "1â€“2 months",
+        "brokerage": "~1 month",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites",
+        "note": "Not in SPEC for this city; borrowed: running from delhi."
+      },
+      "distanceFromHomeKm": 1219,
+      "pros": "IT-corridor location"
+    },
+    {
+      "id": "sehore",
+      "name": "Sehore (Kothri Kalan, VIT Bhopal)",
+      "state": "Madhya Pradesh",
+      "region": "Central",
+      "lat": 23.2032,
+      "lng": 77.0844,
+      "excluded": false,
+      "annualAQI": {
+        "value": 85,
+        "source": "Research done in chat, Nov 2026 (SPEC §11)",
+        "asOf": "2025",
+        "confidence": "estimate",
+        "note": "Rural Sehore estimate 70â€“100; midpoint stored."
+      },
+      "worstMonth": "Nov",
+      "livingScore": 5,
+      "costs": {
+        "pgSingleAllIn": {
+          "min": 11500,
+          "max": 18000
+        },
+        "pgDoubleAllIn": {
+          "min": 9500,
+          "max": 14000
+        },
+        "flat1bhkAllIn": {
+          "min": 16500,
+          "max": 26500
+        },
+        "flat2bhkAllIn": {
+          "min": 20500,
+          "max": 32500
+        },
+        "bungalowAllIn": {
+          "min": 29500,
+          "max": 48500
+        },
+        "rent": {
+          "bhk1": {
+            "min": 7000,
+            "max": 10000
+          },
+          "bhk2": {
+            "min": 10000,
+            "max": 15000
+          },
+          "house3bhk": {
+            "min": 18000,
+            "max": 28000
+          }
+        },
+        "pgRentWithFood": {
+          "single": {
+            "min": 8000,
+            "max": 12000
+          },
+          "double": {
+            "min": 6000,
+            "max": 8000
+          },
+          "triple": {
+            "min": 5000,
+            "max": 6500
+          }
+        },
+        "pgExtras": {
+          "acLaundry": {
+            "min": 600,
+            "max": 1500
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 2000,
+            "max": 3000
+          }
+        },
+        "running": {
+          "electricity": {
+            "min": 900,
+            "max": 2000
+          },
+          "waterMaint": {
+            "min": 300,
+            "max": 800
+          },
+          "wifi": {
+            "min": 500,
+            "max": 700
+          },
+          "food": {
+            "min": 4000,
+            "max": 6000
+          },
+          "maidCook": {
+            "min": 1500,
+            "max": 3000
+          },
+          "transport": {
+            "min": 800,
+            "max": 1500
+          },
+          "misc": {
+            "min": 1500,
+            "max": 2500
+          }
+        },
+        "runningTotal": {
+          "min": 9500,
+          "max": 16500
+        },
+        "depositMonths": "1â€“2 months",
+        "pgDepositMonths": "1 month",
+        "brokerage": "~Â½ month",
+        "confidence": "estimate",
+        "source": "Estimates of typical 2026 market rates near campus (SPEC §11.3–11.6) — verify on rental sites",
+        "note": "Not in SPEC for this city; borrowed: rent from bhopal, running from bhopal, pg from bhopal."
+      },
+      "distanceFromHomeKm": 493,
+      "watchOuts": "Remote campus ~40 km from Bhopal; hostel practically required"
+    },
+    {
+      "id": "gandhinagar",
+      "name": "Gandhinagar",
+      "state": "Gujarat",
+      "region": "West",
+      "lat": 23.2156,
+      "lng": 72.6369,
+      "excluded": true,
+      "annualAQI": {
+        "value": null,
+        "confidence": "none"
+      },
+      "livingScore": null,
+      "costs": null,
+      "distanceFromHomeKm": 228,
+      "watchOuts": "Excluded city (near Ahmedabad)"
+    },
+    {
+      "id": "diu",
+      "name": "Diu",
+      "state": "Dadra and Nagar Haveli and Daman and Diu",
+      "region": "West",
+      "lat": 20.7144,
+      "lng": 70.9874,
+      "excluded": false,
+      "annualAQI": {
+        "value": null,
+        "confidence": "none"
+      },
+      "livingScore": null,
+      "costs": null,
+      "distanceFromHomeKm": 198,
+      "watchOuts": "No cost or air data in SPEC yet"
+    }
+  ]
+}

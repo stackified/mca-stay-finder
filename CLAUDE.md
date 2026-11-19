@@ -45,7 +45,10 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 ## Commands
 
 - `npm run dev` · `npm run build` · `npm test` · `npm run lint` · `npm run typecheck` · `npm run format`
-- Data scripts (from Phase 1): `npm run data:seed` · `npm run data:osm` · `npm run data:all`
+- Data: `npm run data:seed` (write `public/data/*.json`) · `npm run data:check` (validate only). Later: `data:osm`, `data:all`.
+- Seed tables live in `scripts/seed/*.ts`. Edit them, then run `npm run data:seed`. A test fails if the JSON is stale.
+- Scripts run with Node's built-in TypeScript support (`node scripts/x.ts`). Script imports use relative paths with `.ts`; files under `src/` that scripts import (`types/domain.ts`, `lib/naqi.ts`, `lib/geo.ts`) must not use the `@/` alias.
+- tsconfigs: `app` = `src` (browser), `node` = `vite.config.ts` + `scripts`, `test` = `tests` + `scripts` (Node + Vitest types).
 - Run all checks before each phase commit: `npm run lint && npm run typecheck && npm test && npm run build`.
 
 ## Layout of the code
@@ -59,7 +62,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | #   | Phase                                               | Status  |
 | --- | --------------------------------------------------- | ------- |
 | 0   | Setup, 3-column empty layout                        | done    |
-| 1   | Seed data JSON + zod schemas                        | pending |
+| 1   | Seed data JSON + zod schemas                        | done    |
 | 2   | Map, college markers, AQI circles, legend           | pending |
 | 3   | Filters, scoring, ranked table, URL sync, presets   | pending |
 | 4   | OSM stays, clustering, radius ring, deep links      | pending |
@@ -79,6 +82,16 @@ Format: date — decision — reason.
 - 2026-11-20 — Toolchain: Vite 8, React 19, TypeScript 7 (strict + `noUncheckedIndexedAccess`), Tailwind 4, shadcn/ui (Radix, Nova preset), Vitest 5. — Current `create-vite` template.
 - 2026-11-20 — Lint with **oxlint**, not ESLint (SPEC §12 says ESLint). — The Vite template ships oxlint. ESLint's TypeScript parser may not support TypeScript 7 yet. oxlint uses ESLint-compatible rules and runs faster. Prettier is used as SPEC says.
 - 2026-11-20 — `vite.config.ts` uses `base: './'`. — The static build then also works on a GitHub Pages sub-path (Phase 8).
+- 2026-11-20 — Types are inferred from zod schemas in `src/types/domain.ts` (one source). Every JSON file is `{ meta: { generatedAt, generator, sources, notes }, data: [...] }`. — `meta` feeds the "data dates" in the status bar and the Data info modal.
+- 2026-11-20 — `Sourced<T>` has an extra `note` field; a `null` value must have `confidence: 'none'` (zod refine). — Keeps "no data" honest.
+- 2026-11-20 — Schema additions beyond SPEC §8: region `West`; `City.costs`, `City.livingScore`, `College.defaultScores` may be `null`; `CityCosts` adds `pgExtras`, `runningTotal`, `pgDepositMonths`, `confidence`, `source`, `note`; `City.pros`/`watchOuts`; `College.coordsNote`, `seedFinal`, `verdict`. — Needed to hold SPEC §11 data without inventing numbers.
+- 2026-11-20 — IIIT entries (open question 1): IIIT Bhopal (scored with Bhopal values, placement 3.5 = "no data"), IIIT Vadodara Diu and Gandhinagar (no scores). Gandhinagar is the only excluded city in the data. — Lets the IIIT toggle and "Show excluded" be tested. Diu has no air/cost data yet.
+- 2026-11-20 — Kurukshetra seats stored as 106 total (64 + 42 SF); Delhi 25 total (15 SF); Patna 160 total, 80 SF (derived from "half"). — SPEC writes them in two formats.
+- 2026-11-20 — VIT Bhopal city = "Sehore" with Bhopal cost tables (estimate). — No cost data in SPEC for Kothri Kalan.
+- 2026-11-20 — VIT sub-scores (P/A/C/L): Vellore 6.5/8.5/9/6.5, Chennai 7/7.5/6/7.5, Bhopal 3.8/6.5/8/5. — They reproduce the manual finals 7.5 / 7.0 / 5.5 at default weights (gap 3).
+- 2026-11-20 — NAQI Severe band upper ends assumed: PM2.5 380, PM10 510 (clamp at 500). — SPEC gives only "250+" / "430+".
+- 2026-11-20 — `geo.ts` uses own haversine for now; Turf.js arrives in Phase 4 for rings. — Scripts need a dependency-free helper.
+- 2026-11-20 — All coordinates (campus, city, locality) are approximate, from SPEC or general knowledge. `geocode.ts` (Nominatim) must verify them before Phase 4 relies on distances.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 
