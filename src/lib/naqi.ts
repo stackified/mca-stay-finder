@@ -64,6 +64,19 @@ export function pmToNaqi(pm25?: number | null, pm10?: number | null): NaqiResult
   return { aqi, band: naqiBand(aqi), dominant }
 }
 
+/** NAQI bands with upper limits and the CPCB colour scheme (for map and legend). */
+export const NAQI_BANDS: readonly { band: NaqiBand; max: number; color: string }[] = [
+  { band: 'Good', max: 50, color: '#00b050' },
+  { band: 'Satisfactory', max: 100, color: '#92d050' },
+  { band: 'Moderate', max: 200, color: '#ffd700' },
+  { band: 'Poor', max: 300, color: '#ff9900' },
+  { band: 'Very Poor', max: 400, color: '#ff0000' },
+  { band: 'Severe', max: 500, color: '#c00000' },
+]
+
+export const naqiColor = (aqi: number): string =>
+  NAQI_BANDS.find((b) => b.band === naqiBand(aqi))?.color ?? '#c00000'
+
 /** Band name for a NAQI value. */
 export function naqiBand(aqi: number): NaqiBand {
   if (aqi <= 50) return 'Good'

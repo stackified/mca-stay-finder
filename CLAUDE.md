@@ -63,7 +63,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | --- | --------------------------------------------------- | ------- |
 | 0   | Setup, 3-column empty layout                        | done    |
 | 1   | Seed data JSON + zod schemas                        | done    |
-| 2   | Map, college markers, AQI circles, legend           | pending |
+| 2   | Map, college markers, AQI circles, legend           | done    |
 | 3   | Filters, scoring, ranked table, URL sync, presets   | pending |
 | 4   | OSM stays, clustering, radius ring, deep links      | pending |
 | 5   | Dexie owner tools, export/import, budget calc       | pending |
@@ -92,6 +92,14 @@ Format: date — decision — reason.
 - 2026-11-20 — NAQI Severe band upper ends assumed: PM2.5 380, PM10 510 (clamp at 500). — SPEC gives only "250+" / "430+".
 - 2026-11-20 — `geo.ts` uses own haversine for now; Turf.js arrives in Phase 4 for rings. — Scripts need a dependency-free helper.
 - 2026-11-20 — All coordinates (campus, city, locality) are approximate, from SPEC or general knowledge. `geocode.ts` (Nominatim) must verify them before Phase 4 relies on distances.
+- 2026-11-20 — **MapLibre 6 worker under Vite:** MapLibre finds its worker relative to its own module, which breaks after bundling ("Worker failed to load"). Fix in `MapView.tsx`: import `maplibre-gl/dist/maplibre-gl-worker.mjs?url`, call `maplibregl.setWorkerUrl()`, and pass the same instance as `mapLib` (react-map-gl otherwise loads a second instance). Works in dev and `vite build`. Do not remove.
+- 2026-11-20 — Fallback basemap = OSM standard raster tiles (light personal use, attribution shown). CARTO Positron tiles now return "API KEY REQUIRED", so they are not free/keyless any more. Fallback triggers only when the basemap download fails before first load.
+- 2026-11-20 — College markers are DOM `<Marker>` buttons (17 items: keyboard focus, aria-label, dashed CSS border for VIT). Stays (thousands) will use GL circle layers with clustering in Phase 4.
+- 2026-11-20 — AQI circles are a GL layer with a text label per city (name, AQI, band), so colour is not the only signal. AQI band colours follow the CPCB scheme (`NAQI_BANDS` in `naqi.ts`).
+- 2026-11-20 — The legend sits top-left (over Pakistan, no markers there). It starts open on maps ≥ 720 px wide (India is padded right of it) and collapsed on narrower maps. It is a `<details>`, so it is always visible and one click toggles it.
+- 2026-11-20 — MapView is lazy-loaded (own chunk, ~1.1 MB / 312 kB gzip). `chunkSizeWarningLimit` = 1500 kB.
+- 2026-11-20 — Selected college lives in `App` state for now; Phase 3 moves it to Zustand. Selecting flies to zoom ≥ 10.
+- 2026-11-20 — `npm audit` reports 4 moderate issues inside the `shadcn` CLI package (dev tooling, not shipped to the browser). Not fixed; recheck later.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 
