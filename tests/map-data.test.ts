@@ -1,6 +1,7 @@
 import { buildSeed } from '../scripts/seed.ts'
-import { citiesToAqiGeoJSON, collegeMarkers, markerSize } from '@/lib/mapData'
-import { DEFAULT_WEIGHTS, finalScore, formatScore, scoreBand } from '@/lib/scoring'
+import { DEFAULT_FILTERS, applyFilters, type FilterState } from '@/lib/filters'
+import { citiesToAqiGeoJSON, markerSize, toMarkerModels } from '@/lib/mapData'
+import { DEFAULT_WEIGHTS, finalScore, formatScore, rankColleges, scoreBand } from '@/lib/scoring'
 import { formatInrRange } from '@/lib/format'
 
 const seed = buildSeed('2026-11-20')
@@ -63,24 +64,21 @@ describe('citiesToAqiGeoJSON', () => {
   })
 })
 
-describe('collegeMarkers', () => {
-  it('hides IIIT and excluded-city colleges by default (SPEC §2)', () => {
-    const ids = collegeMarkers(colleges, cities).map((m) => m.college.id)
-    expect(ids).toHaveLength(14)
-    expect(ids.some((id) => id.startsWith('iiit-'))).toBe(false)
-  })
+describe('toMarkerModels', () => {
+  const models = toMarkerModels(
+    rankColleges(
+      applyFilters(colleges, cities, structuredClone(DEFAULT_FILTERS) as FilterState),
+      DEFAULT_WEIGHTS,
+      'seed',
+    ),
+  )
 
-  it('shows IIIT on request, but still hides the excluded city', () => {
-    const ids = collegeMarkers(colleges, cities, { showIIIT: true, showExcluded: false }).map(
-      (m) => m.college.id,
-    )
-    expect(ids).toContain('iiit-bhopal')
-    expect(ids).toContain('iiit-vadodara-diu')
-    expect(ids).not.toContain('iiit-vadodara-gandhinagar')
+  it('covers the visible colleges', () => {
+    expect(models).toHaveLength(14)
   })
 
   it('colours by score and flags VIT as backup', () => {
-    const byId = new Map(collegeMarkers(colleges, cities).map((m) => [m.college.id, m]))
+    const byId = new Map(models.map((m) => [m.college.id, m]))
     expect(byId.get('nit-warangal')).toMatchObject({ band: 'high', isBackup: false })
     expect(byId.get('nit-jamshedpur')?.band).toBe('mid')
     expect(byId.get('nit-delhi')?.band).toBe('low')

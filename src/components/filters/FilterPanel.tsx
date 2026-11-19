@@ -4,30 +4,83 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { changedFilterIds, type FilterId } from '@/lib/filters'
+import { useAppStore } from '@/store/useAppStore'
+import { CityFilters } from './CityFilters'
+import { CollegeFilters } from './CollegeFilters'
 
-/** Filter groups from SPEC §6.2. Controls arrive in Phase 3 (A, B, D) and Phase 4 (C). */
-const GROUPS = [
-  { id: 'college', title: 'A. College', phase: 3 },
-  { id: 'city', title: 'B. City', phase: 3 },
-  { id: 'stay', title: 'C. Stay', phase: 4 },
-] as const
+const CITY_IDS: FilterId[] = [
+  'annualAqiMax',
+  'poorDaysMax',
+  'costMax',
+  'livingMin',
+  'regions',
+  'homeDistanceMaxKm',
+]
 
+/** Filter groups from SPEC §6.2. Stay filters (C) arrive in Phase 4. */
 export function FilterPanel() {
+  const filters = useAppStore((s) => s.filters)
+  const resetFilters = useAppStore((s) => s.resetFilters)
+  const ready = useAppStore((s) => s.data !== null)
+
+  const active = changedFilterIds(filters)
+  const cityCount =
+    active.filter((id) => CITY_IDS.includes(id)).length + (filters.showExcluded ? 1 : 0)
+  const collegeCount = active.length - active.filter((id) => CITY_IDS.includes(id)).length
+  const total = cityCount + collegeCount
+
+  const count = (n: number) =>
+    n > 0 && (
+      <Badge variant="secondary" className="mr-1 ml-auto h-4 px-1.5 text-[10px]">
+        {n}
+      </Badge>
+    )
+
   return (
     <ScrollArea className="h-full">
       <div className="p-3">
-        <h2 className="mb-2 text-sm font-semibold">Filters</h2>
-        <Accordion type="multiple" defaultValue={['college']}>
-          {GROUPS.map((g) => (
-            <AccordionItem key={g.id} value={g.id}>
-              <AccordionTrigger>{g.title}</AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground">
-                Filters come in Phase {g.phase}.
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="text-sm font-semibold">Filters</h2>
+          {total > 0 && (
+            <Button variant="ghost" size="xs" onClick={() => resetFilters()}>
+              Reset all ({total})
+            </Button>
+          )}
+        </div>
+        {!ready ? (
+          <p className="text-xs text-muted-foreground">Loading…</p>
+        ) : (
+          <Accordion type="multiple" defaultValue={['college', 'city']}>
+            <AccordionItem value="college">
+              <AccordionTrigger className="text-sm">
+                <span>A. College</span>
+                {count(collegeCount)}
+              </AccordionTrigger>
+              <AccordionContent>
+                <CollegeFilters />
               </AccordionContent>
             </AccordionItem>
-          ))}
-        </Accordion>
+            <AccordionItem value="city">
+              <AccordionTrigger className="text-sm">
+                <span>B. City</span>
+                {count(cityCount)}
+              </AccordionTrigger>
+              <AccordionContent>
+                <CityFilters />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="stay">
+              <AccordionTrigger className="text-sm">C. Stay</AccordionTrigger>
+              <AccordionContent className="text-xs text-muted-foreground">
+                Stay filters come in Phase 4. Current stay radius: {filters.stayMaxDistanceKm} km.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        )}
       </div>
     </ScrollArea>
   )

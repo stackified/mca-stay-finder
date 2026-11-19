@@ -1,5 +1,5 @@
 /**
- * College seed data â€” SPEC Â§11.1.
+ * College seed data — SPEC §11.1.
  * Placements are mostly aggregator figures. Seats are from the official NIMCET 2026 seat matrix.
  * `durationYears: null` = SPEC says "verify".
  */
@@ -66,7 +66,7 @@ export const COLLEGES: College[] = [
   {
     id: 'nit-jamshedpur', name: 'NIT Jamshedpur', type: 'NIT', cityId: 'jamshedpur', lat: 22.777, lng: 86.144, coordsNote,
     entrance: 'NIMCET', seats: seats(115), durationYears: duration(3),
-    avgPackageLPA: agg(mid(9.5, 10.2), undefined, 'Range ~9.5â€“10.2 LPA; midpoint stored'),
+    avgPackageLPA: agg(mid(9.5, 10.2), undefined, 'Range ~9.5–10.2 LPA; midpoint stored'),
     placementRatePct: agg(92, undefined, 'Approximate (~92%)'),
     recruitersNote: 'EPAM, Amdocs, Capgemini',
     campusHostel: true,
@@ -90,7 +90,7 @@ export const COLLEGES: College[] = [
   {
     id: 'nit-agartala', name: 'NIT Agartala', type: 'NIT', cityId: 'agartala', lat: 23.841, lng: 91.423, coordsNote,
     entrance: 'NIMCET', seats: seats(60), durationYears: duration(3),
-    avgPackageLPA: agg(mid(6, 6.5), undefined, 'Range ~6â€“6.5 LPA; midpoint stored'),
+    avgPackageLPA: agg(mid(6, 6.5), undefined, 'Range ~6–6.5 LPA; midpoint stored'),
     placementRatePct: agg(68, undefined, 'Approximate (~68%)'),
     recruitersNote: 'Cognizant, Virtusa',
     campusHostel: true,
@@ -111,7 +111,7 @@ export const COLLEGES: College[] = [
     avgPackageLPA: none('No reliable data'),
     campusHostel: true,
     defaultScores: { placement: 3.5, air: 10, cost: 6, living: 6 }, seedFinal: 6.0, verdict: 'Only if air is #1',
-    notes: 'Campus shifting to Sohra â€” verify where MCA runs',
+    notes: 'Campus shifting to Sohra — verify where MCA runs',
   },
   {
     id: 'nit-patna', name: 'NIT Patna', type: 'NIT', cityId: 'patna', lat: 25.62, lng: 85.173, coordsNote,
@@ -130,19 +130,19 @@ export const COLLEGES: College[] = [
     campusHostel: true,
     defaultScores: { placement: 4.5, air: 1, cost: 6, living: 5 }, seedFinal: 4.0, verdict: 'Skip',
   },
-  // ---------- Optional IIIT entries (SPEC Â§11.1, open question 1: hidden behind the IIIT toggle) ----------
+  // ---------- Optional IIIT entries (SPEC §11.1, open question 1: hidden behind the IIIT toggle) ----------
   {
     id: 'iiit-bhopal', name: 'IIIT Bhopal', type: 'IIIT', cityId: 'bhopal', lat: 23.217, lng: 77.407,
-    coordsNote: 'Runs on the MANIT campus; same point as MANIT â€” verify',
+    coordsNote: 'Runs on the MANIT campus; same point as MANIT — verify',
     entrance: 'NIMCET', seats: seats(90), durationYears: duration(null),
     avgPackageLPA: none('No data in SPEC'),
     campusHostel: true,
-    // Placement 3.5 = SPEC Â§10 "no data" value. Air/cost/living = Bhopal (same city as MANIT).
+    // Placement 3.5 = SPEC §10 "no data" value. Air/cost/living = Bhopal (same city as MANIT).
     defaultScores: { placement: 3.5, air: 5.5, cost: 8, living: 8.5 }, seedFinal: null, verdict: 'Optional (no placement data)',
   },
   {
     id: 'iiit-vadodara-diu', name: 'IIIT Vadodara (Diu campus)', type: 'IIIT', cityId: 'diu', lat: 20.7144, lng: 70.9874,
-    coordsNote: 'City centre of Diu â€” campus location not verified',
+    coordsNote: 'City centre of Diu — campus location not verified',
     entrance: 'NIMCET', seats: seats(90), durationYears: duration(null),
     avgPackageLPA: none('No data in SPEC'),
     campusHostel: true,
@@ -150,7 +150,7 @@ export const COLLEGES: College[] = [
   },
   {
     id: 'iiit-vadodara-gandhinagar', name: 'IIIT Vadodara (Gandhinagar campus)', type: 'IIIT', cityId: 'gandhinagar', lat: 23.2156, lng: 72.6369,
-    coordsNote: 'City centre of Gandhinagar â€” campus location not verified',
+    coordsNote: 'City centre of Gandhinagar — campus location not verified',
     entrance: 'NIMCET', seats: seats(null, 'Not in SPEC'), durationYears: duration(null),
     avgPackageLPA: none('No data in SPEC'),
     campusHostel: true,
@@ -161,15 +161,15 @@ export const COLLEGES: College[] = [
   {
     id: 'vit-vellore', name: 'VIT Vellore (backup)', type: 'VIT', cityId: 'vellore', lat: 12.969, lng: 79.156, coordsNote,
     entrance: 'VITMEE', seats: seats(null), durationYears: { value: 2, confidence: 'official', source: SOURCES.vit, asOf: '2026' },
-    avgPackageLPA: { ...agg(mid(6, 10), undefined, 'Unverified aggregator range ~6â€“10 LPA; midpoint stored') },
-    totalFeesINR: { value: 277000, confidence: 'aggregator', source: SOURCES.chatResearch, note: 'Total academic fees ~â‚¹2.77 L â€” verify' },
+    avgPackageLPA: { ...agg(mid(6, 10), undefined, 'Unverified aggregator range ~6–10 LPA; midpoint stored') },
+    totalFeesINR: { value: 277000, confidence: 'aggregator', source: SOURCES.chatResearch, note: 'Total academic fees ~₹2.77 L — verify' },
     campusHostel: true,
     defaultScores: { placement: 6.5, air: 8.5, cost: 9, living: 6.5 }, seedFinal: 7.5, verdict: 'Backup #1',
   },
   {
     id: 'vit-chennai', name: 'VIT Chennai (backup)', type: 'VIT', cityId: 'chennai-kelambakkam', lat: 12.841, lng: 80.153, coordsNote,
     entrance: 'VITMEE', seats: seats(null), durationYears: { value: 2, confidence: 'official', source: SOURCES.vit, asOf: '2026' },
-    avgPackageLPA: none('Close to Vellore â€” verify'),
+    avgPackageLPA: none('Close to Vellore — verify'),
     campusHostel: true,
     defaultScores: { placement: 7, air: 7.5, cost: 6, living: 7.5 }, seedFinal: 7.0, verdict: 'Backup #2',
     notes: 'IT-corridor location',
@@ -177,9 +177,9 @@ export const COLLEGES: College[] = [
   {
     id: 'vit-bhopal', name: 'VIT Bhopal (backup)', type: 'VIT', cityId: 'sehore', lat: 23.077, lng: 76.851, coordsNote,
     entrance: 'VITMEE', seats: seats(null), durationYears: { value: 2, confidence: 'official', source: SOURCES.vit, asOf: '2026' },
-    avgPackageLPA: none('Weaker â€” verify'),
+    avgPackageLPA: none('Weaker — verify'),
     campusHostel: true,
     defaultScores: { placement: 3.8, air: 6.5, cost: 8, living: 5 }, seedFinal: 5.5, verdict: 'Backup #3',
-    notes: 'Kothri Kalan, Sehore (~40 km from Bhopal). Remote â†’ hostel practically required',
+    notes: 'Kothri Kalan, Sehore (~40 km from Bhopal). Remote → hostel practically required',
   },
 ]

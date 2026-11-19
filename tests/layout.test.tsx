@@ -10,7 +10,8 @@ describe('App layout', () => {
     expect(screen.getByRole('complementary', { name: /filters/i })).toBeInTheDocument()
     expect(screen.getByRole('main', { name: /map/i })).toBeInTheDocument()
     expect(screen.getByRole('complementary', { name: /results/i })).toBeInTheDocument()
-    expect(screen.getByRole('contentinfo')).toHaveTextContent(/colleges/i)
+    // No data in this test, so the status bar shows its loading text.
+    expect(screen.getByRole('contentinfo')).toHaveTextContent(/loading/i)
   })
 
   it('shows a loading message while seed data loads', () => {

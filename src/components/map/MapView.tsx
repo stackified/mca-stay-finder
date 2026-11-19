@@ -1,5 +1,5 @@
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import MapGL, {
   AttributionControl,
   Layer,
@@ -14,8 +14,8 @@ import type { StyleSpecification } from 'maplibre-gl'
 // MapLibre 6 finds its worker relative to its own module, which breaks after Vite bundles it.
 // The worker file has no imports, so serving it as a plain asset works in dev and build.
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
-import type { SeedData } from '@/lib/data'
-import { citiesToAqiGeoJSON, collegeMarkers } from '@/lib/mapData'
+import { citiesToAqiGeoJSON, toMarkerModels } from '@/lib/mapData'
+import { useAppStore, type Results } from '@/store/useAppStore'
 import { CollegeCard } from './CollegeCard'
 import { CollegeMarker } from './CollegeMarker'
 import { Legend, type LayerVisibility } from './Legend'
@@ -30,43 +30,35 @@ const WIDE_MAP_PX = 720
 const isBasemapFailure = (err: Error | undefined) =>
   !!err && /openfreemap|Failed to fetch|AJAXError|NetworkError/i.test(`${err.name} ${err.message}`)
 
-type Props = {
-  data: SeedData
-  selectedCollegeId: string | null
-  onSelectCollege: (id: string | null) => void
-}
-
 /**
- * Live map (SPEC §6.3). Phase 2: basemap, city AQI circles, college markers, popup, legend.
- * Data changes update sources in place; the map is never remounted.
+ * Live map (SPEC §6.3): basemap, city AQI circles, college markers, popup, legend.
+ * Filter / weight changes update sources and markers in place; the map is never remounted.
  */
-export function MapView({ data, selectedCollegeId, onSelectCollege }: Props) {
+export function MapView({ results }: { results: Results }) {
   const mapRef = useRef<MapRef>(null)
+  const selectedCollegeId = useAppStore((s) => s.selectedCollegeId)
+  const selectCollege = useAppStore((s) => s.selectCollege)
   // Wide map: legend open, India shifted right of it. Narrow map: legend starts collapsed.
   const [wide] = useState(() => (document.querySelector('main')?.clientWidth ?? 0) >= WIDE_MAP_PX)
   const [mapStyle, setMapStyle] = useState<string | StyleSpecification>(OPENFREEMAP_STYLE)
   const [styleLoaded, setStyleLoaded] = useState(false)
   const [layers, setLayers] = useState<LayerVisibility>({ cityAqi: true, colleges: true })
 
-  const aqiGeoJSON = useMemo(() => citiesToAqiGeoJSON(data.cities.data), [data.cities.data])
-  const markers = useMemo(
-    () => collegeMarkers(data.colleges.data, data.cities.data),
-    [data.colleges.data, data.cities.data],
+  const aqiGeoJSON = useMemo(
+    () => citiesToAqiGeoJSON(results.visibleCities),
+    [results.visibleCities],
   )
+  const markers = useMemo(() => toMarkerModels(results.rows), [results.rows])
   const selected = markers.find((m) => m.college.id === selectedCollegeId)
 
-  const select = (id: string) => {
-    onSelectCollege(id)
-    const m = markers.find((x) => x.college.id === id)
+  // Fly to the selected college, whether it was picked on the map or in the table.
+  const selLng = selected?.college.lng
+  const selLat = selected?.college.lat
+  useEffect(() => {
     const map = mapRef.current
-    if (m && map) {
-      map.flyTo({
-        center: [m.college.lng, m.college.lat],
-        zoom: Math.max(map.getZoom(), 10),
-        duration: 900,
-      })
-    }
-  }
+    if (!map || selLng === undefined || selLat === undefined) return
+    map.flyTo({ center: [selLng, selLat], zoom: Math.max(map.getZoom(), 10), duration: 900 })
+  }, [selLng, selLat, styleLoaded])
 
   return (
     <div className="relative h-full w-full">
@@ -90,7 +82,7 @@ export function MapView({ data, selectedCollegeId, onSelectCollege }: Props) {
             console.error('Map error:', e.error)
           }
         }}
-        onClick={() => onSelectCollege(null)}
+        onClick={() => selectCollege(null)}
       >
         <NavigationControl position="top-right" showCompass={false} />
         <ScaleControl position="bottom-right" />
@@ -136,7 +128,7 @@ export function MapView({ data, selectedCollegeId, onSelectCollege }: Props) {
               key={m.college.id}
               model={m}
               selected={m.college.id === selectedCollegeId}
-              onSelect={select}
+              onSelect={selectCollege}
             />
           ))}
 
@@ -147,13 +139,21 @@ export function MapView({ data, selectedCollegeId, onSelectCollege }: Props) {
             offset={selected.sizePx / 2 + 6}
             maxWidth="320px"
             closeOnClick={false}
-            onClose={() => onSelectCollege(null)}
+            onClose={() => selectCollege(null)}
             focusAfterOpen={false}
           >
             <CollegeCard model={selected} />
           </Popup>
         )}
       </MapGL>
+      {results.matchCount === 0 && (
+        <div
+          role="status"
+          className="absolute top-2 left-1/2 z-10 -translate-x-1/2 rounded-md border bg-background/95 px-3 py-1.5 text-xs shadow"
+        >
+          No colleges match. See the Ranked tab for which filter to relax.
+        </div>
+      )}
       <Legend layers={layers} onChange={setLayers} defaultOpen={wide} />
     </div>
   )

@@ -6,6 +6,7 @@ import { formatInrRange } from '@/lib/format'
 import type { CollegeMarkerModel } from '@/lib/mapData'
 import { naqiBand } from '@/lib/naqi'
 import { SCORE_BAND_STYLE, formatScore } from '@/lib/scoring'
+import { useAppStore } from '@/store/useAppStore'
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -18,9 +19,11 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 
 /** College popup / side card (SPEC §6.3). Radar chart comes in Phase 7. */
 export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
-  const { college: c, city, score, band } = model
-  const s = c.defaultScores
+  const { college: c, city, final: score, band, scores: s, rank, excluded } = model
+  const mode = useAppStore((st) => st.scoreMode)
+  const w = useAppStore((st) => st.weights)
   const aqi = city?.annualAQI
+  const fmt = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1))
   return (
     <div className="max-h-[60vh] w-72 overflow-y-auto text-xs text-foreground">
       <div className="mb-1 flex items-start justify-between gap-2 pr-4">
@@ -44,11 +47,16 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
           {formatScore(score)}
         </span>
         <div>
-          <p className="font-semibold">{c.verdict}</p>
+          <p className="font-semibold">
+            {rank !== null && `#${rank} · `}
+            {c.verdict}
+          </p>
           <p className="text-muted-foreground">
-            {s
-              ? `P ${s.placement} · A ${s.air} · C ${s.cost} · L ${s.living} (seed, weights 40/25/20/15)`
-              : 'Not enough data to score'}
+            {excluded
+              ? 'Excluded city — never ranked'
+              : s
+                ? `P ${fmt(s.placement)} · A ${fmt(s.air)} · C ${fmt(s.cost)} · L ${fmt(s.living)} (${mode}, weights ${w.placement}/${w.air}/${w.cost}/${w.living})`
+                : 'Not enough data to score'}
           </p>
         </div>
       </div>

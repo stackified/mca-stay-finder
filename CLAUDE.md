@@ -64,7 +64,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | 0   | Setup, 3-column empty layout                        | done    |
 | 1   | Seed data JSON + zod schemas                        | done    |
 | 2   | Map, college markers, AQI circles, legend           | done    |
-| 3   | Filters, scoring, ranked table, URL sync, presets   | pending |
+| 3   | Filters, scoring, ranked table, URL sync, presets   | done    |
 | 4   | OSM stays, clustering, radius ring, deep links      | pending |
 | 5   | Dexie owner tools, export/import, budget calc       | pending |
 | 6   | Live AQI (Open-Meteo), amenities                    | pending |
@@ -77,7 +77,7 @@ Format: date — decision — reason.
 
 - 2026-11-20 — Ranges in seed (for example AQI "~60–75") are stored as the midpoint with `confidence: 'estimate'` and the raw range in `source` note. — Filters and scoring need one number.
 - 2026-11-20 — Agartala and Shillong annual NAQI are derived from PM2.5 with `naqi.ts` (20.3 → ~34 Good; 8.5 → ~14 Good). — SPEC gives PM2.5 only.
-- 2026-11-20 — Seed and computed sub-scores can differ (for example Warangal air: seed 8.5, formula ~6.6). The app uses seed values in Phase 1–2 and switches to computed values in Phase 3, with a toggle to compare. — SPEC §10 says "seed until computed".
+- 2026-11-20 — Seed and computed sub-scores can differ (for example Warangal air: seed 8.5, formula ~6.6). **Superseded in Phase 3:** default = seed scores; computed scores are a toggle in the Weights popover (URL `mode=computed`). — SPEC §10 makes computing a later priority ("P1"). Computed min-max scaling is harsh: at defaults only MNNIT reaches ≥ 8.
 - 2026-11-20 — Owner accepted the default plan for all 6 gaps below. — Phase 0 go-ahead.
 - 2026-11-20 — Toolchain: Vite 8, React 19, TypeScript 7 (strict + `noUncheckedIndexedAccess`), Tailwind 4, shadcn/ui (Radix, Nova preset), Vitest 5. — Current `create-vite` template.
 - 2026-11-20 — Lint with **oxlint**, not ESLint (SPEC §12 says ESLint). — The Vite template ships oxlint. ESLint's TypeScript parser may not support TypeScript 7 yet. oxlint uses ESLint-compatible rules and runs faster. Prettier is used as SPEC says.
@@ -100,6 +100,21 @@ Format: date — decision — reason.
 - 2026-11-20 — MapView is lazy-loaded (own chunk, ~1.1 MB / 312 kB gzip). `chunkSizeWarningLimit` = 1500 kB.
 - 2026-11-20 — Selected college lives in `App` state for now; Phase 3 moves it to Zustand. Selecting flies to zoom ≥ 10.
 - 2026-11-20 — `npm audit` reports 4 moderate issues inside the `shadcn` CLI package (dev tooling, not shipped to the browser). Not fixed; recheck later.
+
+### Phase 3 (filters, scoring, ranking)
+
+- 2026-11-20 — **Never edit files with PowerShell `Get-Content`/`Set-Content`.** PowerShell 5.1 reads BOM-less UTF-8 as ANSI and garbled "§ – — ₹ ≤ µ" in 8 files (including the Phase 1 seed sources and JSON, committed in c864fc2). Repaired exactly (cp1252 → UTF-8 round trip) in the Phase 3 commit. Use the Edit tool or Node for file edits.
+- 2026-11-20 — Logic lives in pure modules: `lib/filters.ts` (FILTER_DEFS: isActive / test / relax / isChanged), `lib/scoring.ts` (finalScore, rebalanceWeights, computeSubScores, rankColleges), `lib/urlState.ts`, `lib/presets.ts`. `store/useAppStore.ts` holds state; `useResults()` memoises filter → score → rank.
+- 2026-11-20 — Filter rules: AND logic; a filter at its default is off; when on, a missing value fails — except fees (SPEC: "unknown badge") and poor-days (only 8/16 cities have it), where unknown passes. `types` is always active (IIIT off by default) but counts as "changed" only when it differs from NIT+VIT.
+- 2026-11-20 — Cost-of-living filter and cost score use the city's PG-double all-in midpoint (₹/month).
+- 2026-11-20 — Computed placement: "no data" = min(3.5, lowest real score), so a college with no data never outranks one with data (SPEC says plain 3.5). Unscored colleges (any sub-score missing, e.g. Diu) rank last with "–".
+- 2026-11-20 — Weights: changing one spreads the remainder over the others by their ratio (equal split if all 0), integer largest-remainder rounding, always 100.
+- 2026-11-20 — Map shows AQI circles only for cities that have a visible college. Excluded colleges (when shown) are greyed markers and greyed table rows, never ranked.
+- 2026-11-20 — Empty state lists, per filter, how many colleges come back if only that filter is relaxed, with a "Relax" button; falls back to raw counts when filters block jointly.
+- 2026-11-20 — Filters without data are shown disabled with a reason: live AQI (Phase 6), worst-month AQI (no data), summer max temp (1 city), train hours (no free source).
+- 2026-11-20 — URL keys: `type inst pmin pmax rate high conf dur seats sf hostel fees aqi poor cost living reg home excl stay w mode sort sel`. Only non-defaults are written.
+- 2026-11-20 — `@tanstack/react-table` pinned to v8 (v9 has a new API). `src/components/ui/slider.tsx` has one local addition: `thumbLabels` (accessible names). The `cn` import in shadcn files is the official `cn` package from shadcn-ui.
+- 2026-11-20 — Measured: a filter change updates map + table in ~90 ms in the dev build (target < 300 ms).
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 

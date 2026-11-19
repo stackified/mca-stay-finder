@@ -1,22 +1,18 @@
-import type { SeedData } from '@/lib/data'
-import { collegeMarkers } from '@/lib/mapData'
+import { useAppStore, useResults } from '@/store/useAppStore'
 
-/**
- * Status bar (SPEC §6.1). Phase 2 counts the default-visible colleges and their cities.
- * Phase 3 replaces this with live filter counts; Phase 4 adds stays.
- */
-export function StatusBar({ data }: { data: SeedData | null }) {
-  const visible = data ? collegeMarkers(data.colleges.data, data.cities.data) : []
-  const cityCount = new Set(visible.map((m) => m.college.cityId)).size
+/** Status bar (SPEC §6.1): live match counts + data date. Stays are added in Phase 4. */
+export function StatusBar() {
+  const results = useResults()
+  const generatedAt = useAppStore((s) => s.data?.colleges.meta.generatedAt)
   return (
     <footer className="flex flex-wrap items-center justify-between gap-2 border-t px-4 py-1.5 text-xs text-muted-foreground">
-      <span>
-        {visible.length} colleges · {cityCount} cities · 0 stays match
+      <span aria-live="polite">
+        {results
+          ? `${results.matchCount} colleges · ${new Set(results.rows.filter((r) => !r.excluded).map((r) => r.college.cityId)).size} cities match · stays from Phase 4`
+          : 'Loading…'}
       </span>
       <span>
-        {data
-          ? `Seed data: ${data.colleges.meta.generatedAt} · costs are estimates`
-          : 'No data loaded yet'}
+        {generatedAt ? `Seed data: ${generatedAt} · costs are estimates` : 'No data loaded yet'}
       </span>
     </footer>
   )

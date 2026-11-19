@@ -179,7 +179,7 @@
         "value": 9.85,
         "source": "Aggregators: Shiksha, Collegedunia, Careers360, Tarkashastra, Maarula — replace with official NIRF/college reports when available",
         "confidence": "aggregator",
-        "note": "Range ~9.5â€“10.2 LPA; midpoint stored"
+        "note": "Range ~9.5–10.2 LPA; midpoint stored"
       },
       "placementRatePct": {
         "value": 92,
@@ -301,7 +301,7 @@
         "value": 6.25,
         "source": "Aggregators: Shiksha, Collegedunia, Careers360, Tarkashastra, Maarula — replace with official NIRF/college reports when available",
         "confidence": "aggregator",
-        "note": "Range ~6â€“6.5 LPA; midpoint stored"
+        "note": "Range ~6–6.5 LPA; midpoint stored"
       },
       "placementRatePct": {
         "value": 68,
@@ -417,7 +417,7 @@
       },
       "seedFinal": 6,
       "verdict": "Only if air is #1",
-      "notes": "Campus shifting to Sohra â€” verify where MCA runs"
+      "notes": "Campus shifting to Sohra — verify where MCA runs"
     },
     {
       "id": "nit-patna",
@@ -511,7 +511,7 @@
       "cityId": "bhopal",
       "lat": 23.217,
       "lng": 77.407,
-      "coordsNote": "Runs on the MANIT campus; same point as MANIT â€” verify",
+      "coordsNote": "Runs on the MANIT campus; same point as MANIT — verify",
       "entrance": "NIMCET",
       "seats": {
         "value": 90,
@@ -546,7 +546,7 @@
       "cityId": "diu",
       "lat": 20.7144,
       "lng": 70.9874,
-      "coordsNote": "City centre of Diu â€” campus location not verified",
+      "coordsNote": "City centre of Diu — campus location not verified",
       "entrance": "NIMCET",
       "seats": {
         "value": 90,
@@ -576,7 +576,7 @@
       "cityId": "gandhinagar",
       "lat": 23.2156,
       "lng": 72.6369,
-      "coordsNote": "City centre of Gandhinagar â€” campus location not verified",
+      "coordsNote": "City centre of Gandhinagar — campus location not verified",
       "entrance": "NIMCET",
       "seats": {
         "value": null,
@@ -622,13 +622,13 @@
         "value": 8,
         "source": "Aggregators: Shiksha, Collegedunia, Careers360, Tarkashastra, Maarula — replace with official NIRF/college reports when available",
         "confidence": "aggregator",
-        "note": "Unverified aggregator range ~6â€“10 LPA; midpoint stored"
+        "note": "Unverified aggregator range ~6–10 LPA; midpoint stored"
       },
       "totalFeesINR": {
         "value": 277000,
         "source": "Research done in chat, Nov 2026 (SPEC §11)",
         "confidence": "aggregator",
-        "note": "Total academic fees ~â‚¹2.77 L â€” verify"
+        "note": "Total academic fees ~₹2.77 L — verify"
       },
       "campusHostel": true,
       "defaultScores": {
@@ -663,7 +663,7 @@
       "avgPackageLPA": {
         "value": null,
         "confidence": "none",
-        "note": "Close to Vellore â€” verify"
+        "note": "Close to Vellore — verify"
       },
       "campusHostel": true,
       "defaultScores": {
@@ -699,7 +699,7 @@
       "avgPackageLPA": {
         "value": null,
         "confidence": "none",
-        "note": "Weaker â€” verify"
+        "note": "Weaker — verify"
       },
       "campusHostel": true,
       "defaultScores": {
@@ -710,7 +710,7 @@
       },
       "seedFinal": 5.5,
       "verdict": "Backup #3",
-      "notes": "Kothri Kalan, Sehore (~40 km from Bhopal). Remote â†’ hostel practically required"
+      "notes": "Kothri Kalan, Sehore (~40 km from Bhopal). Remote → hostel practically required"
     }
   ]
 }

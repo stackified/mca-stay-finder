@@ -14,9 +14,9 @@ export function CollegeMarker({
 }: {
   model: CollegeMarkerModel
   selected: boolean
-  onSelect: (id: string) => void
+  onSelect: (id: string | null) => void
 }) {
-  const { college, score, band, sizePx, isBackup } = model
+  const { college, final: score, band, sizePx, isBackup, excluded } = model
   const style = SCORE_BAND_STYLE[band]
   return (
     <Marker
@@ -31,14 +31,23 @@ export function CollegeMarker({
           e.stopPropagation()
           onSelect(college.id)
         }}
-        aria-label={`${college.name}, score ${formatScore(score)}, ${college.verdict}`}
+        aria-label={
+          excluded
+            ? `${college.name}, excluded city, not ranked`
+            : `${college.name}, score ${formatScore(score)}, ${college.verdict}`
+        }
         aria-pressed={selected}
-        title={`${college.name} — ${formatScore(score)} (${college.verdict})`}
+        title={
+          excluded
+            ? `${college.name} — excluded city (not ranked)`
+            : `${college.name} — ${formatScore(score)} (${college.verdict})`
+        }
         className={cn(
           'flex cursor-pointer items-center justify-center rounded-full border-2 text-[10px] font-bold shadow-md transition-transform',
           'hover:scale-110 focus-visible:scale-110 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-600',
           isBackup ? 'border-dashed border-gray-900' : 'border-white',
           selected && 'scale-110 outline-3 outline-offset-2 outline-blue-600',
+          excluded && 'opacity-45 grayscale',
         )}
         style={{
           width: sizePx,

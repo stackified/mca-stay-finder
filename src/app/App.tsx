@@ -1,8 +1,9 @@
-import { Suspense, lazy, useState } from 'react'
+import { Suspense, lazy, useEffect } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { FilterPanel } from '@/components/filters/FilterPanel'
 import { ResultsPanel } from '@/components/results/ResultsPanel'
 import { useSeedData } from '@/lib/data'
+import { useAppStore, useResults } from '@/store/useAppStore'
 import { StatusBar } from './StatusBar'
 import { TopBar } from './TopBar'
 
@@ -24,14 +25,18 @@ function MapMessage({ children }: { children: React.ReactNode }) {
  */
 export default function App() {
   const seed = useSeedData()
-  // Phase 3 moves this into the Zustand store.
-  const [selectedCollegeId, setSelectedCollegeId] = useState<string | null>(null)
+  const setData = useAppStore((s) => s.setData)
+  const results = useResults()
+
+  useEffect(() => {
+    if (seed.status === 'ready') setData(seed.data)
+  }, [seed, setData])
 
   return (
     <TooltipProvider>
       <div className="flex h-dvh flex-col bg-background text-foreground">
         <TopBar />
-        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto lg:grid-cols-[240px_minmax(0,1fr)_300px] lg:overflow-hidden xl:grid-cols-[300px_minmax(0,1fr)_380px]">
+        <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto lg:grid-cols-[260px_minmax(0,1fr)_340px] lg:overflow-hidden xl:grid-cols-[300px_minmax(0,1fr)_420px]">
           <aside
             aria-label="Filters"
             className="order-2 min-h-0 border-t lg:order-1 lg:border-t-0 lg:border-r"
@@ -45,13 +50,9 @@ export default function App() {
                 <span role="alert">Could not load data: {seed.error}</span>
               </MapMessage>
             )}
-            {seed.status === 'ready' && (
+            {seed.status === 'ready' && results && (
               <Suspense fallback={<MapMessage>Loading map…</MapMessage>}>
-                <MapView
-                  data={seed.data}
-                  selectedCollegeId={selectedCollegeId}
-                  onSelectCollege={setSelectedCollegeId}
-                />
+                <MapView results={results} />
               </Suspense>
             )}
           </main>
@@ -62,7 +63,7 @@ export default function App() {
             <ResultsPanel />
           </aside>
         </div>
-        <StatusBar data={seed.status === 'ready' ? seed.data : null} />
+        <StatusBar />
       </div>
     </TooltipProvider>
   )

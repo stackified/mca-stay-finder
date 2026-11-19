@@ -2,9 +2,9 @@
  * Turns domain data into map-ready values. Pure functions (unit-tested).
  */
 import type { FeatureCollection, Point } from 'geojson'
-import type { City, College } from '@/types/domain'
+import type { City } from '@/types/domain'
 import { naqiBand, naqiColor, type NaqiBand } from './naqi'
-import { finalScore, scoreBand, type ScoreBand } from './scoring'
+import { scoreBand, type RankedCollege, type ScoreBand } from './scoring'
 
 export type CityAqiProps = {
   id: string
@@ -46,10 +46,7 @@ export function citiesToAqiGeoJSON(cities: readonly City[]): CityAqiCollection {
 /** "Delhi (Narela)" → "Delhi". */
 const shortName = (name: string) => name.replace(/\s*\(.*\)\s*$/, '')
 
-export type CollegeMarkerModel = {
-  college: College
-  city: City | undefined
-  score: number | null
+export type CollegeMarkerModel = RankedCollege & {
   band: ScoreBand
   sizePx: number
   isBackup: boolean
@@ -61,28 +58,11 @@ export function markerSize(seats: number | null): number {
   return Math.round(Math.min(40, 22 + Math.sqrt(seats) * 1.2))
 }
 
-/**
- * Default visibility before Phase 3 filters exist:
- * hide IIIT (behind a toggle) and colleges in excluded cities (SPEC §2).
- */
-export function collegeMarkers(
-  colleges: readonly College[],
-  cities: readonly City[],
-  opts: { showIIIT: boolean; showExcluded: boolean } = { showIIIT: false, showExcluded: false },
-): CollegeMarkerModel[] {
-  const cityById = new Map(cities.map((c) => [c.id, c]))
-  return colleges
-    .filter((c) => opts.showIIIT || c.type !== 'IIIT')
-    .filter((c) => opts.showExcluded || !cityById.get(c.cityId)?.excluded)
-    .map((college) => {
-      const score = finalScore(college.defaultScores)
-      return {
-        college,
-        city: cityById.get(college.cityId),
-        score,
-        band: scoreBand(score),
-        sizePx: markerSize(college.seats.value),
-        isBackup: college.type === 'VIT',
-      }
-    })
-}
+/** Adds marker styling to ranked results. */
+export const toMarkerModels = (rows: readonly RankedCollege[]): CollegeMarkerModel[] =>
+  rows.map((r) => ({
+    ...r,
+    band: scoreBand(r.final),
+    sizePx: markerSize(r.college.seats.value),
+    isBackup: r.college.type === 'VIT',
+  }))
