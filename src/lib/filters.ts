@@ -35,6 +35,8 @@ export type FilterState = {
   feesMax: number | null
   // B. City
   annualAqiMax: number | null
+  /** Live (modelled, 24-h mean) NAQI from Open-Meteo, Phase 6. */
+  liveAqiMax: number | null
   poorDaysMax: number | null
   /** Max PG-double all-in midpoint, ₹/month (the app's cost-of-living index). */
   costMax: number | null
@@ -59,6 +61,7 @@ export const DEFAULT_FILTERS: Readonly<FilterState> = {
   campusHostelOnly: false,
   feesMax: null,
   annualAqiMax: null,
+  liveAqiMax: null,
   poorDaysMax: null,
   costMax: null,
   livingMin: null,
@@ -90,6 +93,7 @@ export type FilterId =
   | 'campusHostelOnly'
   | 'feesMax'
   | 'annualAqiMax'
+  | 'liveAqiMax'
   | 'poorDaysMax'
   | 'costMax'
   | 'livingMin'
@@ -101,7 +105,7 @@ type FilterDef = {
   label: string
   isActive: (f: FilterState) => boolean
   /** True = the college passes. Only called when the filter is active. */
-  test: (c: College, city: City | undefined, f: FilterState) => boolean
+  test: (c: College, city: City | undefined, f: FilterState, ctx: FilterContext) => boolean
   /** Turns this one filter off. */
   relax: (f: FilterState) => Partial<FilterState>
   /**
@@ -212,6 +216,14 @@ export const FILTER_DEFS: readonly FilterDef[] = [
     relax: () => ({ annualAqiMax: null }),
   },
   {
+    id: 'liveAqiMax',
+    label: 'Live AQI (modelled)',
+    isActive: (f) => f.liveAqiMax !== null,
+    // No live value (offline, API down) fails, like any other active filter.
+    test: (_c, city, f, ctx) => !!city && atMost(ctx.liveNaqi?.(city.id), f.liveAqiMax!),
+    relax: () => ({ liveAqiMax: null }),
+  },
+  {
     id: 'poorDaysMax',
     label: '"Poor or worse" days',
     isActive: (f) => f.poorDaysMax !== null,
@@ -265,17 +277,24 @@ export type FilterOutcome = {
   visible: boolean
 }
 
+/** Data that is not part of the seed (Phase 6 live AQI). */
+export type FilterContext = {
+  /** Live NAQI for a city, or null/undefined when not available. */
+  liveNaqi?: (cityId: string) => number | null | undefined
+}
+
 export function applyFilters(
   colleges: readonly College[],
   cities: readonly City[],
   f: FilterState,
+  ctx: FilterContext = {},
 ): FilterOutcome[] {
   const cityById = new Map(cities.map((c) => [c.id, c]))
   const active = FILTER_DEFS.filter((d) => d.isActive(f))
   return colleges.map((college) => {
     const city = cityById.get(college.cityId)
     const excluded = !!city?.excluded
-    const failed = active.filter((d) => !d.test(college, city, f)).map((d) => d.id)
+    const failed = active.filter((d) => !d.test(college, city, f, ctx)).map((d) => d.id)
     return {
       college,
       city,

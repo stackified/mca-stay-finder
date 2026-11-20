@@ -16,7 +16,9 @@
     "data:seed": "node scripts/seed.ts",
     "data:check": "node scripts/seed.ts --check",
     "data:geocode": "node scripts/geocode.ts",
-    "data:osm": "node scripts/fetch-osm-stays.ts"
+    "data:osm": "node scripts/fetch-osm-stays.ts",
+    "data:aqi": "node scripts/fetch-aqi.ts",
+    "data:amenities": "node scripts/fetch-osm-amenities.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",

@@ -1,4 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react'
+import { LiveAirBanner } from '@/components/common/LiveAirLoader'
+import { useLiveAirLoader } from '@/store/useLiveAirLoader'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { FilterPanel } from '@/components/filters/FilterPanel'
 import { ResultsPanel } from '@/components/results/ResultsPanel'
@@ -32,11 +34,13 @@ export default function App() {
   useEffect(() => {
     if (seed.status === 'ready') setData(seed.data)
   }, [seed, setData])
+  const reloadLive = useLiveAirLoader()
 
   return (
     <TooltipProvider>
       <div className="flex h-dvh flex-col bg-background text-foreground">
         <TopBar />
+        <LiveAirBanner onRetry={() => void reloadLive(true)} />
         <div className="grid min-h-0 flex-1 grid-cols-1 overflow-y-auto lg:grid-cols-[260px_minmax(0,1fr)_340px] lg:overflow-hidden xl:grid-cols-[300px_minmax(0,1fr)_420px]">
           <aside
             aria-label="Filters"
@@ -64,7 +68,7 @@ export default function App() {
             <ResultsPanel />
           </aside>
         </div>
-        <StatusBar />
+        <StatusBar onRefreshLive={() => void reloadLive(true)} />
         <AddListingDialog />
       </div>
     </TooltipProvider>

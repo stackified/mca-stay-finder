@@ -27,6 +27,8 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
   const selectCollege = useAppStore((st) => st.selectCollege)
   const setResultsTab = useAppStore((st) => st.setResultsTab)
   const aqi = city?.annualAQI
+  const liveSource = useAppStore((st) => st.live.result?.source)
+  const liveCity = useAppStore((st) => (city ? st.live.result?.data?.byCity[city.id] : undefined))
   const fmt = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1))
   return (
     <div className="max-h-[60vh] w-72 overflow-y-auto text-xs text-foreground">
@@ -101,6 +103,29 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
             '–'
           )}
         </Row>
+        <Row label="Live AQI (24 h)">
+          {liveCity?.naqi != null ? (
+            <span className="inline-flex items-center gap-1">
+              {liveCity.naqi} · {naqiBand(liveCity.naqi)}
+              <ConfidenceBadge
+                sourced={{
+                  confidence: 'estimate',
+                  source: 'Open-Meteo CAMS model (not a CPCB station), mean of the last 24 h',
+                  asOf: liveCity.time ? `${liveCity.time} local` : undefined,
+                  note: `PM2.5 ${liveCity.pm25_24h} µg/m³, PM10 ${liveCity.pm10_24h} µg/m³${liveSource === 'stale-cache' || liveSource === 'snapshot' ? ' — cached data' : ''}`,
+                }}
+              />
+            </span>
+          ) : (
+            <span className="text-muted-foreground">{liveSource ? 'Unavailable' : 'Loading…'}</span>
+          )}
+        </Row>
+        {liveCity?.tempC != null && (
+          <Row label="Weather now">
+            {Math.round(liveCity.tempC)} °C
+            {liveCity.tempMaxC != null && ` · max today ${Math.round(liveCity.tempMaxC)} °C`}
+          </Row>
+        )}
         <Row label="PG double all-in">
           {city?.costs ? (
             <span className="inline-flex items-center gap-1">

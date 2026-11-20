@@ -19,6 +19,7 @@ import {
   ALL_STATUS,
   ALL_STAY_TYPES,
 } from './stays'
+import { AMENITY_KINDS } from './amenities'
 import type { SortState } from './presets'
 import { DEFAULT_WEIGHTS, WEIGHT_KEYS, type ScoreMode, type Weights } from './scoring'
 
@@ -47,6 +48,8 @@ const NUM: Record<string, NumKey> = {
   seats: 'seatsMin',
   fees: 'feesMax',
   aqi: 'annualAqiMax',
+  live: 'liveAqiMax',
+  amenm: 'stayAmenityRadiusM',
   poor: 'poorDaysMax',
   cost: 'costMax',
   living: 'livingMin',
@@ -81,6 +84,7 @@ const LISTS: [string, ListKey, readonly string[]][] = [
   ['gender', 'stayGender', ALL_GENDER],
   ['src', 'staySources', ALL_SOURCES],
   ['vstat', 'stayStatus', ALL_STATUS],
+  ['amen', 'stayAmenities', AMENITY_KINDS],
 ]
 
 const sameList = (a: readonly string[], b: readonly string[]) =>

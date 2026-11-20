@@ -16,6 +16,7 @@ import { StayFilters } from './StayFilters'
 
 const CITY_IDS: FilterId[] = [
   'annualAqiMax',
+  'liveAqiMax',
   'poorDaysMax',
   'costMax',
   'livingMin',

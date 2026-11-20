@@ -23,6 +23,9 @@ export function CityFilters() {
   const cities = useAppStore((s) => s.data?.cities.data) ?? NO_CITIES
   const f = useAppStore((s) => s.filters)
   const set = useAppStore((s) => s.setFilters)
+  const liveSource = useAppStore((s) => s.live.result?.source)
+  const liveLoading = useAppStore((s) => s.live.loading)
+  const liveAvailable = !!liveSource && liveSource !== 'none'
 
   const b = useMemo(() => {
     const costs = nums(cities.map(cityCostIndex))
@@ -69,7 +72,33 @@ export function CityFilters() {
         step={5}
         hint="Only 8 cities have this figure; cities without it stay visible."
       />
-      <PendingRow label="Live AQI right now" reason="Comes in Phase 6 (Open-Meteo, modelled)." />
+      {liveAvailable ? (
+        <MaxSlider
+          label="Live AQI (last 24 h)"
+          value={f.liveAqiMax}
+          onChange={(liveAqiMax) => set({ liveAqiMax })}
+          min={0}
+          max={400}
+          step={10}
+          hint={
+            <>
+              Open-Meteo CAMS model, 24-h mean, not a CPCB station reading
+              {liveSource === 'stale-cache' || liveSource === 'snapshot' ? ' — cached data' : ''}.
+            </>
+          }
+        />
+      ) : (
+        <PendingRow
+          label="Live AQI (last 24 h)"
+          reason={
+            liveLoading
+              ? 'Loading live data…'
+              : f.liveAqiMax !== null
+                ? `Paused (≤ ${f.liveAqiMax} is kept): live data unavailable right now.`
+                : 'Live data unavailable right now (offline or API down).'
+          }
+        />
+      )}
       <PendingRow label="Worst-month AQI" reason="No monthly AQI data in the seed yet." />
       <MaxSlider
         label="Cost of living (PG double all-in)"

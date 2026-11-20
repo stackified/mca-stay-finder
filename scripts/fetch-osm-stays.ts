@@ -13,59 +13,11 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { fileSchema, StaySchema } from '../src/types/domain.ts'
 import { buildSeed, DATA_DIR } from './seed.ts'
-import { dedupeStays, overpassQuery, toStay, type OsmElement } from './osm-stays-lib.ts'
+import { dedupeStays, overpassQuery, toStay } from './osm-stays-lib.ts'
+import { overpass, PAUSE_MS, sleep, type OsmElement } from './overpass.ts'
 
 const DIR = path.dirname(fileURLToPath(import.meta.url))
 const CACHE_DIR = path.join(DIR, '.cache', 'overpass')
-const ENDPOINT = 'https://overpass-api.de/api/interpreter'
-const USER_AGENT = 'mca-stay-finder/1.0 (personal)'
-const PAUSE_MS = 5000
-// Retry waits for a busy server (429/5xx/remark) grow from 15 s: 15, 30, 60, 120, 240.
-const backoff = (attempt: number) => 15_000 * 2 ** (attempt - 1)
-
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
-
-async function overpass(query: string): Promise<OsmElement[]> {
-  for (let attempt = 1; attempt <= 5; attempt++) {
-    let res: Response
-    try {
-      res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'User-Agent': USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ data: query }),
-        signal: AbortSignal.timeout(240_000),
-      })
-    } catch (err) {
-      const wait = 15_000 * 2 ** (attempt - 1)
-      console.warn(
-        `  Overpass network error (${String(err).slice(0, 80)}); retry ${attempt} in ${wait / 1000}s`,
-      )
-      await sleep(wait)
-      continue
-    }
-    if (res.ok) {
-      const body = (await res.json()) as { elements: OsmElement[]; remark?: string }
-      // Overpass reports timeouts / memory errors as HTTP 200 with a `remark` and no elements.
-      if (body.remark) {
-        const wait = backoff(attempt)
-        console.warn(
-          `  Overpass remark: ${body.remark.slice(0, 160)}; retry ${attempt} in ${wait / 1000}s`,
-        )
-        await sleep(wait)
-        continue
-      }
-      return body.elements
-    }
-    if (res.status === 429 || res.status >= 500) {
-      const wait = backoff(attempt)
-      console.warn(`  Overpass HTTP ${res.status}; retry ${attempt} in ${wait / 1000}s`)
-      await sleep(wait)
-      continue
-    }
-    throw new Error(`Overpass HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`)
-  }
-  throw new Error('Overpass: too many retries')
-}
 
 async function main() {
   const fresh = process.argv.includes('--fresh')

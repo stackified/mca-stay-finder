@@ -1,3 +1,4 @@
+import { AMENITY_COLOR, AMENITY_KINDS, AMENITY_LABEL, AMENITY_SYMBOL } from '@/lib/amenities'
 import { NAQI_BANDS } from '@/lib/naqi'
 import { SCORE_BAND_STYLE, type ScoreBand } from '@/lib/scoring'
 import { ALL_STAY_TYPES, STAY_TYPE_COLOR, STAY_TYPE_LABEL, STAY_TYPE_SYMBOL } from '@/lib/stays'
@@ -7,13 +8,15 @@ export type LayerVisibility = {
   colleges: boolean
   stays: boolean
   localities: boolean
+  amenities: boolean
 }
 
 const LAYERS: { key: keyof LayerVisibility; label: string }[] = [
   { key: 'colleges', label: 'Colleges' },
   { key: 'stays', label: 'Stays (clustered)' },
   { key: 'localities', label: 'Localities (selected campus)' },
-  { key: 'cityAqi', label: 'City air quality (annual)' },
+  { key: 'amenities', label: 'Amenities (selected campus)' },
+  { key: 'cityAqi', label: 'City air quality' },
 ]
 
 const SCORE_ORDER: ScoreBand[] = ['high', 'mid', 'low', 'none']
@@ -41,10 +44,16 @@ export function Legend({
   layers,
   onChange,
   defaultOpen,
+  aqiMode,
+  onAqiModeChange,
+  liveAvailable,
 }: {
   layers: LayerVisibility
   onChange: (next: LayerVisibility) => void
   defaultOpen: boolean
+  aqiMode: 'annual' | 'live'
+  onAqiModeChange: (mode: 'annual' | 'live') => void
+  liveAvailable: boolean
 }) {
   return (
     <details
@@ -107,9 +116,47 @@ export function Legend({
         </div>
       )}
 
+      {layers.amenities && (
+        <div className="mb-1.5">
+          <p className="font-semibold">Amenities (5 km)</p>
+          <ul className="grid grid-cols-2 gap-x-2">
+            {AMENITY_KINDS.map((k) => (
+              <li key={k} className="flex items-center gap-1">
+                <span
+                  aria-hidden
+                  className="inline-flex h-3 min-w-3 items-center justify-center rounded-sm px-0.5 text-[7px] font-bold text-white"
+                  style={{ backgroundColor: AMENITY_COLOR[k] }}
+                >
+                  {AMENITY_SYMBOL[k]}
+                </span>
+                {AMENITY_LABEL[k]}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {layers.cityAqi && (
         <div>
-          <p className="font-semibold">Indian NAQI (annual)</p>
+          <fieldset className="mb-0.5 flex items-center gap-2">
+            <legend className="sr-only">Air quality shown</legend>
+            <span className="font-semibold">Indian NAQI</span>
+            {(['annual', 'live'] as const).map((m) => (
+              <label key={m} className="flex items-center gap-0.5">
+                <input
+                  type="radio"
+                  name="aqi-mode"
+                  checked={aqiMode === m}
+                  disabled={m === 'live' && !liveAvailable}
+                  onChange={() => onAqiModeChange(m)}
+                />
+                {m === 'annual' ? 'Annual' : 'Live 24 h'}
+              </label>
+            ))}
+          </fieldset>
+          {aqiMode === 'live' && (
+            <p className="mb-0.5 text-muted-foreground">Open-Meteo CAMS model, not CPCB stations</p>
+          )}
           <ul>
             {NAQI_BANDS.map((b, i) => (
               <li key={b.band} className="flex items-center gap-1">

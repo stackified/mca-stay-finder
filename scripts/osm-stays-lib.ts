@@ -5,14 +5,8 @@
 import type { City, Locality, Range, Stay } from '../src/types/domain.ts'
 import { haversineKm } from '../src/lib/geo.ts'
 
-export type OsmElement = {
-  type: 'node' | 'way' | 'relation'
-  id: number
-  lat?: number
-  lon?: number
-  center?: { lat: number; lon: number }
-  tags?: Record<string, string>
-}
+import type { OsmElement } from './overpass.ts'
+export type { OsmElement }
 
 /**
  * Overpass query based on SPEC §9, made lighter: ONE spatial search for named objects, then

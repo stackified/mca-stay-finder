@@ -15,6 +15,8 @@ import {
   type WeightKey,
   type Weights,
 } from '@/lib/scoring'
+import { AmenityIndex, rowToAmenity } from '@/lib/amenities'
+import type { LiveResult } from '@/lib/liveAirCache'
 import { applyStayFilters } from '@/lib/stays'
 import { decodeUrlState, encodeUrlState } from '@/lib/urlState'
 import type { Stay } from '@/types/domain'
@@ -31,6 +33,12 @@ export type AppState = {
   /** Not in the URL: transient UI state. */
   selectedStayId: string | null
   resultsTab: ResultsTab
+  /** Live AQI from Open-Meteo with cache/snapshot fallback (Phase 6). */
+  live: { loading: boolean; result: LiveResult | null }
+  /** Map AQI circles: CPCB annual or Open-Meteo live (SPEC §6.3 "toggle annual vs live"). */
+  aqiMode: 'annual' | 'live'
+  setLive: (live: AppState['live']) => void
+  setAqiMode: (mode: AppState['aqiMode']) => void
 
   setData: (data: SeedData) => void
   selectStay: (id: string | null) => void
@@ -130,6 +138,10 @@ export const useAppStore = create<AppState>()((set) => ({
   data: null,
   selectedStayId: null,
   resultsTab: 'ranked',
+  live: { loading: false, result: null },
+  aqiMode: 'annual',
+  setLive: (live) => set({ live }),
+  setAqiMode: (aqiMode) => set({ aqiMode }),
   ...fromUrl(),
 
   setData: (data) => set({ data }),
@@ -208,11 +220,25 @@ export function useResults() {
   // Own listings and visit status live in IndexedDB.
   const listings = useListings()
   const statusMap = useStatusMap()
+  const liveData = useAppStore((s) => s.live.result?.data ?? null)
+  // One index over all campuses' amenities, built once per data load.
+  const amenityIndex = useMemo(
+    () =>
+      data?.amenities
+        ? new AmenityIndex(Object.values(data.amenities.byCampus).flat().map(rowToAmenity))
+        : null,
+    [data],
+  )
 
   const colleges = useMemo(() => {
     if (!data) return null
     const cities = data.cities.data
-    const outcomes = applyFilters(data.colleges.data, cities, filters)
+    // Without live data the live filter is paused (not "match nothing"): the owner could not
+    // see or reset a disabled filter that hides every college.
+    const effective = liveData ? filters : { ...filters, liveAqiMax: null }
+    const outcomes = applyFilters(data.colleges.data, cities, effective, {
+      liveNaqi: (cityId) => liveData?.byCity[cityId]?.naqi,
+    })
     const rows = rankColleges(outcomes, weights, scoreMode)
     const cityIds = new Set(rows.map((r) => r.college.cityId))
     const visibleCities = cities.filter((c) => cityIds.has(c.id))
@@ -223,9 +249,9 @@ export function useResults() {
       visibleCities,
       rankedCount,
       matchCount,
-      impact: matchCount === 0 ? filterImpact(outcomes, filters) : [],
+      impact: matchCount === 0 ? filterImpact(outcomes, effective) : [],
     }
-  }, [data, filters, weights, scoreMode])
+  }, [data, filters, weights, scoreMode, liveData])
 
   // Stays: within the ring of the selected campus, or of any visible campus if none is selected.
   return useMemo(() => {
@@ -239,9 +265,10 @@ export function useResults() {
       selected,
       campuses: live.map((r) => ({ id: r.college.id, lat: r.college.lat, lng: r.college.lng })),
       statusOf: (id) => statusMap.get(entityKey('stay', id)) ?? 'not_visited',
+      amenities: amenityIndex,
     })
     return { ...colleges, selected: selectedRow, stays, listingCount: listings.length }
-  }, [data, colleges, filters, selectedCollegeId, listings, statusMap])
+  }, [data, colleges, filters, selectedCollegeId, listings, statusMap, amenityIndex])
 }
 
 export type Results = NonNullable<ReturnType<typeof useResults>>

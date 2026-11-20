@@ -16,6 +16,7 @@ import { useAppStore } from '@/store/useAppStore'
 import { CheckboxGroup, FilterRow, MaxSlider, PendingRow, RangeSlider, ToggleRow } from './controls'
 
 import { VISIT_STATUS_LABEL } from '@/types/userData'
+import { AMENITY_KINDS, AMENITY_LABEL } from '@/lib/amenities'
 
 const OSM_HINT = 'OSM places have no data for this. Only your own listings can match.'
 
@@ -24,6 +25,7 @@ export function StayFilters() {
   const f = useAppStore((s) => s.filters)
   const set = useAppStore((s) => s.setFilters)
   const selected = useAppStore((s) => s.selectedCollegeId)
+  const hasAmenities = useAppStore((s) => !!s.data?.amenities)
 
   return (
     <div className="divide-y">
@@ -144,7 +146,39 @@ export function StayFilters() {
           { value: 'any', label: 'Any / not stated' },
         ]}
       />
-      <PendingRow label="Amenities within X m" reason="Comes in Phase 6 (OSM amenities layer)." />
+      {hasAmenities ? (
+        <>
+          <CheckboxGroup
+            label={`Amenities within ${f.stayAmenityRadiusM} m`}
+            allValues={AMENITY_KINDS}
+            defaultValues={[]}
+            value={f.stayAmenities}
+            onChange={(stayAmenities) => set({ stayAmenities })}
+            options={AMENITY_KINDS.map((k) => ({ value: k, label: AMENITY_LABEL[k] }))}
+          />
+          {f.stayAmenities.length > 0 && (
+            <FilterRow label="Amenity distance" value={`${f.stayAmenityRadiusM} m`}>
+              <Slider
+                min={100}
+                max={2000}
+                step={100}
+                value={[f.stayAmenityRadiusM]}
+                onValueChange={([v]) => v !== undefined && set({ stayAmenityRadiusM: v })}
+                thumbLabels={['Amenity distance, metres']}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Straight line from the stay, OSM data within 5 km of each campus. Small towns may
+                miss shops.
+              </p>
+            </FilterRow>
+          )}
+        </>
+      ) : (
+        <PendingRow
+          label="Amenities within X m"
+          reason="No amenity data loaded (run npm run data:amenities)."
+        />
+      )}
       <CheckboxGroup
         label="Source"
         allValues={ALL_SOURCES}

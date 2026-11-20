@@ -3,6 +3,7 @@
  */
 import type { Feature, FeatureCollection, Point, Polygon } from 'geojson'
 import type { City, Locality, StayType } from '@/types/domain'
+import { AMENITY_COLOR, AMENITY_SYMBOL, type AmenityKind, type AmenityRow } from './amenities'
 import { circleRing, haversineKm, type LatLng } from './geo'
 import { STAY_TYPE_COLOR, STAY_TYPE_SYMBOL, type StayResult } from './stays'
 import { naqiBand, naqiColor, type NaqiBand } from './naqi'
@@ -20,13 +21,20 @@ export type CityAqiProps = {
 export type CityAqiCollection = FeatureCollection<Point, CityAqiProps>
 
 /** One point per city with a known annual AQI. Cities without data are left out. */
-export function citiesToAqiGeoJSON(cities: readonly City[]): CityAqiCollection {
+/**
+ * With `live`, circles use the live (modelled, 24-h mean) NAQI instead of the annual figure;
+ * cities without a live value are left out.
+ */
+export function citiesToAqiGeoJSON(
+  cities: readonly City[],
+  live?: Readonly<Record<string, { naqi: number | null }>> | null,
+): CityAqiCollection {
   const features: CityAqiCollection['features'] = []
   for (const c of cities) {
-    const aqi = c.annualAQI.value
+    const aqi = live ? (live[c.id]?.naqi ?? null) : c.annualAQI.value
     if (aqi === null) continue
     const rounded = Math.round(aqi)
-    const approx = c.annualAQI.confidence === 'estimate' ? '~' : ''
+    const approx = live ? '' : c.annualAQI.confidence === 'estimate' ? '~' : ''
     features.push({
       type: 'Feature',
       id: c.id,
@@ -38,7 +46,7 @@ export function citiesToAqiGeoJSON(cities: readonly City[]): CityAqiCollection {
         band: naqiBand(rounded),
         color: naqiColor(rounded),
         // Text label so colour is not the only signal (SPEC §12).
-        label: `${shortName(c.name)}\nAQI ${approx}${rounded} · ${naqiBand(rounded)}`,
+        label: `${shortName(c.name)}\n${live ? 'Live ' : ''}AQI ${approx}${rounded} · ${naqiBand(rounded)}`,
       },
     })
   }
@@ -58,6 +66,28 @@ export type CollegeMarkerModel = RankedCollege & {
 export function markerSize(seats: number | null): number {
   if (seats === null) return 22
   return Math.round(Math.min(40, 22 + Math.sqrt(seats) * 1.2))
+}
+
+// ---------- Amenities (Phase 6) ----------
+
+export type AmenityProps = { kind: AmenityKind; color: string; symbol: string; name: string }
+
+export function amenitiesToGeoJSON(
+  rows: readonly AmenityRow[],
+): FeatureCollection<Point, AmenityProps> {
+  return {
+    type: 'FeatureCollection',
+    features: rows.map(([kind, lat, lng, name]) => ({
+      type: 'Feature',
+      geometry: { type: 'Point', coordinates: [lng, lat] },
+      properties: {
+        kind,
+        color: AMENITY_COLOR[kind],
+        symbol: AMENITY_SYMBOL[kind],
+        name: name ?? '',
+      },
+    })),
+  }
 }
 
 // ---------- Stays, ring, localities (Phase 4) ----------

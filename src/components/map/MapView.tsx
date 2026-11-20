@@ -16,6 +16,7 @@ import type { GeoJSONSource, StyleSpecification } from 'maplibre-gl'
 // The worker file has no imports, so serving it as a plain asset works in dev and build.
 import maplibreWorkerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import {
+  amenitiesToGeoJSON,
   citiesToAqiGeoJSON,
   localitiesToGeoJSON,
   ringBounds,
@@ -63,11 +64,24 @@ export function MapView({ results }: { results: Results }) {
     colleges: true,
     stays: true,
     localities: true,
+    amenities: true,
   })
+  const aqiMode = useAppStore((s) => s.aqiMode)
+  const setAqiMode = useAppStore((s) => s.setAqiMode)
+  const liveByCity = useAppStore((s) => s.live.result?.data?.byCity ?? null)
+  const liveMode = aqiMode === 'live' && !!liveByCity
 
   const aqiGeoJSON = useMemo(
-    () => citiesToAqiGeoJSON(results.visibleCities),
-    [results.visibleCities],
+    () => citiesToAqiGeoJSON(results.visibleCities, liveMode ? liveByCity : null),
+    [results.visibleCities, liveMode, liveByCity],
+  )
+  // Amenities of the selected campus only (keeps the map light).
+  const amenitiesGeoJSON = useMemo(
+    () =>
+      amenitiesToGeoJSON(
+        selectedCollegeId ? (data?.amenities?.byCampus[selectedCollegeId] ?? []) : [],
+      ),
+    [data, selectedCollegeId],
   )
   const markers = useMemo(() => toMarkerModels(results.rows), [results.rows])
   const selected = markers.find((m) => m.college.id === selectedCollegeId)
@@ -187,7 +201,11 @@ export function MapView({ results }: { results: Results }) {
         <NavigationControl position="top-right" showCompass={false} />
         <ScaleControl position="bottom-right" />
         {/* The OpenFreeMap / OSM styles carry the © OpenStreetMap + tile attribution. */}
-        <AttributionControl position="bottom-right" compact />
+        <AttributionControl
+          position="bottom-right"
+          compact
+          customAttribution='Air quality &amp; weather: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> (CAMS)'
+        />
 
         <Source id="city-aqi" type="geojson" data={aqiGeoJSON}>
           <Layer
@@ -239,6 +257,36 @@ export function MapView({ results }: { results: Results }) {
         </Source>
 
         {/* Localities near the selected campus (SPEC §11.6). */}
+        {/* Amenities near the selected campus (SPEC §9), drawn under stays and localities. */}
+        <Source id="amenities" type="geojson" data={amenitiesGeoJSON}>
+          <Layer
+            id="amenity-dot"
+            type="circle"
+            minzoom={11}
+            layout={{ visibility: layers.amenities ? 'visible' : 'none' }}
+            paint={{
+              'circle-color': ['get', 'color'],
+              'circle-radius': ['interpolate', ['linear'], ['zoom'], 11, 2.5, 15, 6],
+              'circle-stroke-color': '#ffffff',
+              'circle-stroke-width': 1,
+              'circle-opacity': 0.85,
+            }}
+          />
+          <Layer
+            id="amenity-symbol"
+            type="symbol"
+            minzoom={14}
+            layout={{
+              visibility: layers.amenities ? 'visible' : 'none',
+              'text-field': ['get', 'symbol'],
+              'text-font': LABEL_FONT,
+              'text-size': 8,
+              'text-allow-overlap': true,
+            }}
+            paint={{ 'text-color': '#ffffff' }}
+          />
+        </Source>
+
         <Source id="localities" type="geojson" data={localitiesGeoJSON}>
           <Layer
             id="locality-dot"
@@ -410,7 +458,14 @@ export function MapView({ results }: { results: Results }) {
           </button>
         </div>
       )}
-      <Legend layers={layers} onChange={setLayers} defaultOpen={wide} />
+      <Legend
+        layers={layers}
+        onChange={setLayers}
+        defaultOpen={wide}
+        aqiMode={liveMode ? 'live' : 'annual'}
+        onAqiModeChange={setAqiMode}
+        liveAvailable={!!liveByCity}
+      />
     </div>
   )
 }

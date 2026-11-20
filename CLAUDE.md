@@ -67,7 +67,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | 3   | Filters, scoring, ranked table, URL sync, presets   | done    |
 | 4   | OSM stays, clustering, radius ring, deep links      | done    |
 | 5   | Dexie owner tools, export/import, budget calc       | done    |
-| 6   | Live AQI (Open-Meteo), amenities                    | pending |
+| 6   | Live AQI (Open-Meteo), amenities                    | done    |
 | 7   | Charts, compare, dark mode, mobile, a11y, data-info | pending |
 | 8   | Optional: Actions cron, Pages deploy                | pending |
 
@@ -146,6 +146,19 @@ Format: date — decision — reason.
 - 2026-11-20 — Stay "Status" filter (URL `vstat`) uses the owner's visit status; default = all.
 - 2026-11-20 — Custom presets = the current URL query string, saved by name (`applyQuery`). Budget calculator (`lib/budget.ts`): monthly all-in × 24/36 + deposit (months × rent, PG uses PG deposit) + brokerage (flats only; "Rare" = 0) + one-time furnishing (default PG 0, 1BHK ₹40k, 2BHK ₹60k, house ₹80k — owner estimate, editable). Defaults follow the selected college's city and duration.
 - 2026-11-20 — Verified in the browser: §13 item 7 (listing added via the form + map pick appears at once and survives a reload) and item 8 (shortlist, note, status, checklist survive a reload; export → import round-trips). Test data was removed afterwards.
+
+### Phase 6 (live data)
+
+- 2026-11-20 — Live air (`lib/liveAir.ts`): Open-Meteo air-quality + forecast APIs, free and keyless, ONE request each for all 16 cities (comma-separated lat/lng → JSON array). Live NAQI = NAQI of the **mean of the last 24 hourly PM2.5/PM10 values up to now** (needs ≥ 18 h), because NAQI bands are 24-h averages; the current hour alone would overstate peaks. Labelled "modelled (CAMS)", never presented as a CPCB reading. Weather: current temperature, humidity, today's max.
+- 2026-11-20 — Cache and fallback (`lib/liveAirCache.ts`, pure, injected fetch/storage/clock): fresh localStorage cache (< 1 h, key `mca-live-air-v1`) → Open-Meteo → stale cache → `public/data/aqi-live.json` snapshot (`npm run data:aqi`) → none. Every non-fresh source shows a banner with the data date and a Retry; the status bar shows the source and a "↻ refresh" (skips the cache). Storage errors (private mode, quota) are ignored.
+- 2026-11-20 — Live AQI filter (`liveAqiMax`, URL `live`): college filter on the city's live NAQI. When no live data is available at all, the filter is **paused** (not "match nothing") and the panel says so — otherwise a disabled filter could hide every college with no way to reset it.
+- 2026-11-20 — Map: city circles switch between CPCB annual and live 24-h NAQI (legend radio; live disabled when unavailable). Attribution adds "Air quality & weather: Open-Meteo (CAMS)". The college card shows annual and live AQI side by side plus weather.
+- 2026-11-20 — Amenities (`lib/amenities.ts`, `npm run data:amenities` → `public/data/amenities.json`): 7 kinds from SPEC (grocery, hospital/clinic, pharmacy, gym, bus stop, railway station, restaurant/mess) within 5 km of each campus, compact rows `[kind, lat, lng, name?]` per campus. Shared Overpass client in `scripts/overpass.ts`. `AmenityIndex` (0.01° grid) answers "is there a <kind> within X m" fast; checked against brute force in tests.
+- 2026-11-20 — Stay filter "Amenities within X m" (`stayAmenities`, `stayAmenityRadiusM` default 500 m, URL `amen`, `amenm`): every checked kind must be within X m (straight line). No amenity data → the filter matches nothing and the panel says the data is missing. Amenity layer shows only for the selected campus, from zoom 11, with letter symbols.
+- 2026-11-20 — Live snapshot seen on 2026-11-20 06:30 IST (modelled): Prayagraj 316, Delhi 294, Kurukshetra 213, Patna 211, Vellore 174, Chennai 129 … Warangal 92, Trichy 92, Bhopal 61, Agartala 42, Shillong 22. Live values can differ a lot from annual ones (Vellore annual ~68 est. vs 174 live; Bhopal annual 112 vs 61 live) — show both, decide on annual.
+- 2026-11-20 — Verified in the browser: live data loads and is cached (reload makes no Open-Meteo request); `live=100` keeps exactly the 7 campuses whose cities are ≤ 100; with Open-Meteo blocked, refresh falls back to old cache → (cache cleared) snapshot → (snapshot blocked) "unavailable" with the live filter paused; unblocking + Retry returns to live.
+- 2026-11-20 — Amenities result: 2,178 rows (113 kB) for 17 campuses. Coverage varies widely: NIT Patna 319, IIIT Bhopal 304, MANIT 286, NIT Warangal 251 … VIT Bhopal 10, NIT Agartala 1 (only a railway station). Verified in the browser: at NIT Warangal (10 km ring) "Grocery within 500 m" keeps exactly the 2 stays a brute-force distance check finds; the layer draws for the selected campus.
+- 2026-11-20 — Browser testing note: in the scaled Browser pane, coordinate clicks inside scrolling panels/popups often miss; DOM `.click()` on the real control (which runs the app's own handler) was used where a coordinate click failed.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 
