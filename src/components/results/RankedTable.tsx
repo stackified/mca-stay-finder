@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-table'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { ConfidenceBadge } from '@/components/common/SourcedValue'
+import { ShortlistStar } from '@/components/tools/OwnerControls'
 import { Badge } from '@/components/ui/badge'
 import { rangeMid } from '@/lib/filters'
 import { formatInrRange } from '@/lib/format'
@@ -43,8 +44,14 @@ export function RankedTable({ rows }: { rows: RankedCollege[] }) {
         id: 'institute',
         header: 'Institute',
         cell: ({ row: { original: r } }) => (
-          <div className="min-w-36">
+          <div className="min-w-40">
             <div className="flex items-center gap-1 font-medium">
+              <ShortlistStar
+                kind="college"
+                id={r.college.id}
+                name={r.college.name}
+                className="-ml-1 size-5"
+              />
               {r.college.name.replace(' (backup)', '')}
               {r.college.type === 'VIT' && (
                 <Badge variant="outline" className="h-4 px-1 text-[9px]">

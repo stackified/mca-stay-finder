@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { FilterPanel } from '@/components/filters/FilterPanel'
 import { ResultsPanel } from '@/components/results/ResultsPanel'
+import { AddListingDialog } from '@/components/tools/AddListingDialog'
 import { useSeedData } from '@/lib/data'
 import { useAppStore, useResults } from '@/store/useAppStore'
 import { StatusBar } from './StatusBar'
@@ -64,6 +65,7 @@ export default function App() {
           </aside>
         </div>
         <StatusBar />
+        <AddListingDialog />
       </div>
     </TooltipProvider>
   )

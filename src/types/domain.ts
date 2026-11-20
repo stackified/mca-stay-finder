@@ -208,6 +208,11 @@ export const StaySchema = z.object({
   phone: z.string().optional(),
   photoUrl: z.string().optional(),
   tags: z.record(z.string(), z.string()).optional(),
+  // Own listings only (SPEC §6.5 "Add my listing").
+  deposit: z.number().nonnegative().optional(),
+  locality: z.string().optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
 })
 export type Stay = z.infer<typeof StaySchema>
 

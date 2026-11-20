@@ -11,7 +11,14 @@ import {
   DEFAULT_FILTERS,
   type FilterState,
 } from './filters'
-import { ALL_FURNISHED, ALL_GENDER, ALL_SHARING, ALL_SOURCES, ALL_STAY_TYPES } from './stays'
+import {
+  ALL_FURNISHED,
+  ALL_GENDER,
+  ALL_SHARING,
+  ALL_SOURCES,
+  ALL_STATUS,
+  ALL_STAY_TYPES,
+} from './stays'
 import type { SortState } from './presets'
 import { DEFAULT_WEIGHTS, WEIGHT_KEYS, type ScoreMode, type Weights } from './scoring'
 
@@ -73,6 +80,7 @@ const LISTS: [string, ListKey, readonly string[]][] = [
   ['furn', 'stayFurnished', ALL_FURNISHED],
   ['gender', 'stayGender', ALL_GENDER],
   ['src', 'staySources', ALL_SOURCES],
+  ['vstat', 'stayStatus', ALL_STATUS],
 ]
 
 const sameList = (a: readonly string[], b: readonly string[]) =>

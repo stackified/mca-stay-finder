@@ -53,6 +53,8 @@ export const ALL_SHARING = ['single', 'double', 'triple'] as const
 export const ALL_FURNISHED = ['none', 'semi', 'full'] as const
 export const ALL_GENDER = ['boys', 'girls', 'coliving', 'any'] as const
 export const ALL_SOURCES = ['osm', 'mine'] as const
+export const ALL_STATUS = ['not_visited', 'shortlisted', 'visited', 'rejected'] as const
+export type StayStatus = (typeof ALL_STATUS)[number]
 
 export type StayFilterState = {
   stayTypes: StayType[]
@@ -69,6 +71,8 @@ export type StayFilterState = {
   /** "any" also matches stays whose gender is not stated. */
   stayGender: (typeof ALL_GENDER)[number][]
   staySources: (typeof ALL_SOURCES)[number][]
+  /** Owner's visit status (Phase 5). */
+  stayStatus: StayStatus[]
 }
 
 export const DEFAULT_STAY_FILTERS: Readonly<StayFilterState> = {
@@ -85,6 +89,7 @@ export const DEFAULT_STAY_FILTERS: Readonly<StayFilterState> = {
   stayFurnished: [...ALL_FURNISHED],
   stayGender: [...ALL_GENDER],
   staySources: [...ALL_SOURCES],
+  stayStatus: [...ALL_STATUS],
 }
 
 /** Assumed city speed for the commute estimate (auto / bus). */
@@ -120,6 +125,7 @@ export type StayFilterId =
   | 'ac'
   | 'furnished'
   | 'gender'
+  | 'status'
 
 /** Stay-filter ids that differ from the defaults (distance always applies, so it is left out). */
 export function changedStayFilters(f: StayFilterState): StayFilterId[] {
@@ -135,10 +141,16 @@ export function changedStayFilters(f: StayFilterState): StayFilterId[] {
   if (f.stayAcOnly) out.push('ac')
   if (!sameSet(f.stayFurnished, d.stayFurnished)) out.push('furnished')
   if (!sameSet(f.stayGender, d.stayGender)) out.push('gender')
+  if (!sameSet(f.stayStatus, d.stayStatus)) out.push('status')
   return out
 }
 
-type Pred = (s: Stay, f: StayFilterState, distanceKm: number) => boolean
+type Pred = (
+  s: Stay,
+  f: StayFilterState,
+  distanceKm: number,
+  statusOf: (stayId: string) => StayStatus,
+) => boolean
 
 const PREDICATES: Record<Exclude<StayFilterId, 'distance'>, Pred> = {
   types: (s, f) => f.stayTypes.includes(s.type),
@@ -165,6 +177,7 @@ const PREDICATES: Record<Exclude<StayFilterId, 'distance'>, Pred> = {
   ac: (s) => s.ac === true,
   furnished: (s, f) => s.furnished !== undefined && f.stayFurnished.includes(s.furnished),
   gender: (s, f) => f.stayGender.includes(s.gender ?? 'any'),
+  status: (s, f, _d, statusOf) => f.stayStatus.includes(statusOf(s.id)),
 }
 
 export type StayResult = {
@@ -186,8 +199,11 @@ export function applyStayFilters(
   ctx: {
     selected: (LatLng & { id: string }) | null
     campuses: readonly (LatLng & { id: string })[]
+    /** Owner's visit status per stay id (default "not_visited"). */
+    statusOf?: (stayId: string) => StayStatus
   },
 ): StayResult[] {
+  const statusOf = ctx.statusOf ?? (() => 'not_visited' as const)
   // Type always applies: its default (PG + flat + bungalow) already hides some types.
   // The other filters only run when changed from their "off" default.
   const active = ['types', ...changedStayFilters(f).filter((id) => id !== 'types')] as Exclude<
@@ -208,7 +224,7 @@ export function applyStayFilters(
       }
     }
     if (best > f.stayMaxDistanceKm) continue
-    const failed = active.filter((id) => !PREDICATES[id](stay, f, best))
+    const failed = active.filter((id) => !PREDICATES[id](stay, f, best, statusOf))
     if (failed.length === 0) out.push({ stay, distanceKm: best, campusId, failed })
   }
   return out.sort((a, b) => a.distanceKm - b.distanceKm)

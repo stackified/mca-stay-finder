@@ -17,6 +17,9 @@ import {
 } from '@/lib/scoring'
 import { applyStayFilters } from '@/lib/stays'
 import { decodeUrlState, encodeUrlState } from '@/lib/urlState'
+import type { Stay } from '@/types/domain'
+import { entityKey } from '@/types/userData'
+import { useListings, useStatusMap } from './useOwnerData'
 
 export type AppState = {
   data: SeedData | null
@@ -40,7 +43,83 @@ export type AppState = {
   setSorting: (sorting: SortState) => void
   selectCollege: (id: string | null) => void
   applyPreset: (id: string) => void
+  /** Applies a saved custom preset (stored as a URL query string). */
+  applyQuery: (query: string) => void
+
+  /** "Add my listing" form (SPEC §6.5). The draft survives while the owner picks a point on the map. */
+  listingForm: { open: boolean; picking: boolean; draft: ListingDraft }
+  openListingForm: (opts?: { edit?: Stay; collegeId?: string }) => void
+  updateListingDraft: (patch: Partial<ListingDraft>) => void
+  closeListingForm: () => void
+  startPickLocation: () => void
+  /** `null` cancels picking and reopens the form unchanged. */
+  pickLocation: (point: { lat: number; lng: number } | null) => void
 }
+
+/** Form fields as typed (numbers as text so a field can be empty). */
+export type ListingDraft = {
+  editId?: string
+  createdAt?: string
+  name: string
+  type: Stay['type']
+  collegeId: string
+  lat?: number
+  lng?: number
+  locality: string
+  rent: string
+  deposit: string
+  sharing: '' | NonNullable<Stay['sharing']>
+  food: '' | 'yes' | 'no'
+  ac: '' | 'yes' | 'no'
+  furnished: '' | NonNullable<Stay['furnished']>
+  gender: '' | NonNullable<Stay['gender']>
+  phone: string
+  url: string
+  photoUrl: string
+}
+
+const yesNo = (v: boolean | undefined): '' | 'yes' | 'no' =>
+  v === undefined ? '' : v ? 'yes' : 'no'
+
+export function draftFromStay(s: Stay): ListingDraft {
+  return {
+    editId: s.id,
+    createdAt: s.createdAt,
+    name: s.name,
+    type: s.type,
+    collegeId: s.nearestCollegeId,
+    lat: s.lat,
+    lng: s.lng,
+    locality: s.locality ?? '',
+    rent: s.rent?.toString() ?? '',
+    deposit: s.deposit?.toString() ?? '',
+    sharing: s.sharing ?? '',
+    food: yesNo(s.food),
+    ac: yesNo(s.ac),
+    furnished: s.furnished ?? '',
+    gender: s.gender ?? '',
+    phone: s.phone ?? '',
+    url: s.url ?? '',
+    photoUrl: s.photoUrl ?? '',
+  }
+}
+
+export const emptyDraft = (collegeId = ''): ListingDraft => ({
+  name: '',
+  type: 'pg',
+  collegeId,
+  locality: '',
+  rent: '',
+  deposit: '',
+  sharing: '',
+  food: '',
+  ac: '',
+  furnished: '',
+  gender: '',
+  phone: '',
+  url: '',
+  photoUrl: '',
+})
 
 const fromUrl = () => decodeUrlState(typeof window === 'undefined' ? '' : window.location.search)
 const defaults = () => decodeUrlState('')
@@ -75,6 +154,37 @@ export const useAppStore = create<AppState>()((set) => ({
     const preset = PRESETS.find((p) => p.id === id)
     if (preset) set(preset.build())
   },
+  applyQuery: (query) => set(decodeUrlState(query)),
+
+  listingForm: { open: false, picking: false, draft: emptyDraft() },
+  openListingForm: (opts) =>
+    set((s) => ({
+      listingForm: {
+        open: true,
+        picking: false,
+        draft: opts?.edit
+          ? draftFromStay(opts.edit)
+          : emptyDraft(opts?.collegeId ?? s.selectedCollegeId ?? ''),
+      },
+    })),
+  updateListingDraft: (patch) =>
+    set((s) => ({
+      listingForm: { ...s.listingForm, draft: { ...s.listingForm.draft, ...patch } },
+    })),
+  closeListingForm: () =>
+    set((s) => ({ listingForm: { ...s.listingForm, open: false, picking: false } })),
+  startPickLocation: () =>
+    set((s) => ({ listingForm: { ...s.listingForm, open: false, picking: true } })),
+  pickLocation: (point) =>
+    set((s) => ({
+      listingForm: {
+        open: true,
+        picking: false,
+        draft: point
+          ? { ...s.listingForm.draft, lat: point.lat, lng: point.lng }
+          : s.listingForm.draft,
+      },
+    })),
 }))
 
 // URL sync (skipped in tests without a window).
@@ -95,6 +205,9 @@ export function useResults() {
   const weights = useAppStore((s) => s.weights)
   const scoreMode = useAppStore((s) => s.scoreMode)
   const selectedCollegeId = useAppStore((s) => s.selectedCollegeId)
+  // Own listings and visit status live in IndexedDB.
+  const listings = useListings()
+  const statusMap = useStatusMap()
 
   const colleges = useMemo(() => {
     if (!data) return null
@@ -122,12 +235,13 @@ export function useResults() {
     const selected = selectedRow
       ? { id: selectedRow.college.id, lat: selectedRow.college.lat, lng: selectedRow.college.lng }
       : null
-    const stays = applyStayFilters(data.stays?.data ?? [], filters, {
+    const stays = applyStayFilters([...listings, ...(data.stays?.data ?? [])], filters, {
       selected,
       campuses: live.map((r) => ({ id: r.college.id, lat: r.college.lat, lng: r.college.lng })),
+      statusOf: (id) => statusMap.get(entityKey('stay', id)) ?? 'not_visited',
     })
-    return { ...colleges, selected: selectedRow, stays }
-  }, [data, colleges, filters, selectedCollegeId])
+    return { ...colleges, selected: selectedRow, stays, listingCount: listings.length }
+  }, [data, colleges, filters, selectedCollegeId, listings, statusMap])
 }
 
 export type Results = NonNullable<ReturnType<typeof useResults>>

@@ -5,6 +5,7 @@ import {
   ALL_GENDER,
   ALL_SHARING,
   ALL_SOURCES,
+  ALL_STATUS,
   ALL_STAY_TYPES,
   DEFAULT_STAY_TYPES,
   STAY_TYPE_COLOR,
@@ -14,7 +15,9 @@ import {
 import { useAppStore } from '@/store/useAppStore'
 import { CheckboxGroup, FilterRow, MaxSlider, PendingRow, RangeSlider, ToggleRow } from './controls'
 
-const OSM_HINT = 'OSM places have no data for this. Only your own listings (Phase 5) can match.'
+import { VISIT_STATUS_LABEL } from '@/types/userData'
+
+const OSM_HINT = 'OSM places have no data for this. Only your own listings can match.'
 
 /** SPEC §6.2 C — stay filters. */
 export function StayFilters() {
@@ -152,9 +155,12 @@ export function StayFilters() {
           { value: 'mine', label: 'My listings' },
         ]}
       />
-      <PendingRow
-        label="Status (visited, shortlisted…)"
-        reason="Comes in Phase 5 with your saved data."
+      <CheckboxGroup
+        label="Status"
+        allValues={ALL_STATUS}
+        value={f.stayStatus}
+        onChange={(stayStatus) => set({ stayStatus })}
+        options={ALL_STATUS.map((s) => ({ value: s, label: VISIT_STATUS_LABEL[s] }))}
       />
     </div>
   )

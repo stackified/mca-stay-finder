@@ -66,7 +66,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | 2   | Map, college markers, AQI circles, legend           | done    |
 | 3   | Filters, scoring, ranked table, URL sync, presets   | done    |
 | 4   | OSM stays, clustering, radius ring, deep links      | done    |
-| 5   | Dexie owner tools, export/import, budget calc       | pending |
+| 5   | Dexie owner tools, export/import, budget calc       | done    |
 | 6   | Live AQI (Open-Meteo), amenities                    | pending |
 | 7   | Charts, compare, dark mode, mobile, a11y, data-info | pending |
 | 8   | Optional: Actions cron, Pages deploy                | pending |
@@ -135,6 +135,17 @@ Format: date — decision — reason.
 - 2026-11-20 — **OSM data quality filter** (`isNotAStay` in `scripts/osm-stays-lib.ts`). The raw name-based matching produced false positives: schools/colleges with "Boys"/"Girls"/"PG" in the name ("SAM Girls' College", "TH.H.N.SINGH PG COLLEGE"), footpaths ("Route to 1.8k Hostel"), offices, a welding shop, staff housing ("Director's Bunglow"). Dropped: objects with highway/shop/office/leisure/landuse/place/… keys, non-housing amenities, and names with school/office/road/temple/quarters/shop/… — unless tagged tourism=hostel/guest_house/apartment. Kept: `landuse=residential` areas named like a housing society ("Tulsi Apartments"). Each rule has a unit test with the real example.
 - 2026-11-20 — Result (2026-11-20): 1,005 stays — apartment 514, hostel 204, bungalow 90, unknown 66, guest house 63, campus hostel 62, **PG only 6**. After removing schools, OSM maps almost no PGs: own listings (Phase 5) and the rental links are the real source, as SPEC §17 warns. NIT Warangal: 4 stays within 5 km at default types; its 18 campus hostel blocks are found correctly.
 - 2026-11-20 — Verified in the browser (SPEC §13): item 2 (select NIT Warangal → ring fitted, list shows only the 4 stays inside), item 3 (slider 10 km → 7 stays, 2.5 km → exactly the 2 at 2.3/2.4 km; ring, markers, list, status bar and URL agree). Item 6 is covered by unit tests.
+
+### Phase 5 (owner tools)
+
+- 2026-11-20 — Owner data lives only in IndexedDB (Dexie, `src/store/db.ts`, DB name `mca-stay-finder`, version 1): tables `shortlist`, `notes`, `status`, `checklist`, `presets`, `listings`. Keys: `college:<id>` / `stay:<id>`. Components read with `useLiveQuery` hooks in `src/store/useOwnerData.ts` (Maps/Sets memoised). All writes go through the functions in `db.ts`. IndexedDB is per origin: dev (5173), preview (4173) and a deployed site each have their own data — use Export/Import to move it.
+- 2026-11-20 — "Not visited" status and empty notes are stored as "no row". Deleting a listing also deletes its shortlist mark, note, status and checklist (one transaction).
+- 2026-11-20 — Export file = `{ app: 'mca-stay-finder', version: 1, exportedAt, shortlist, notes, status, checklist, presets, myListings }`, schema in `src/types/userData.ts`. Import validates first (zod), then REPLACES all owner data in one transaction; an invalid file changes nothing. CSV is export-only (listings; shortlist & notes) with formula-injection protection. Verified in the browser: export → wipe → import gives the same data (only JSON key order differs, from zod).
+- 2026-11-20 — Own listings (`lib/listings.ts`): `source: 'mine'`, id `mine-<uuid>`, distance to the chosen campus, `allInEstimate` = your rent + the city's monthly extras (PG: AC/laundry + transport + misc, + food if not included; flat: running total; bungalow: running total + ₹2–4k). Only http(s) URLs are kept. Own listings join OSM stays in `useResults()` and are the only stays that can match rent/food/AC/furnishing filters. Map: black ring = own listing, gold ring = shortlisted, ★ badge on shortlisted college markers.
+- 2026-11-20 — Listing location: "Pick on map" (form closes, crosshair + banner, Esc cancels, draft kept in the store) or Nominatim search from the browser (only on the Search button, ≥ 1.1 s apart, cached, viewbox ~30 km around the campus).
+- 2026-11-20 — Stay "Status" filter (URL `vstat`) uses the owner's visit status; default = all.
+- 2026-11-20 — Custom presets = the current URL query string, saved by name (`applyQuery`). Budget calculator (`lib/budget.ts`): monthly all-in × 24/36 + deposit (months × rent, PG uses PG deposit) + brokerage (flats only; "Rare" = 0) + one-time furnishing (default PG 0, 1BHK ₹40k, 2BHK ₹60k, house ₹80k — owner estimate, editable). Defaults follow the selected college's city and duration.
+- 2026-11-20 — Verified in the browser: §13 item 7 (listing added via the form + map pick appears at once and survives a reload) and item 8 (shortlist, note, status, checklist survive a reload; export → import round-trips). Test data was removed afterwards.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 

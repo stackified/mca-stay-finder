@@ -10,10 +10,13 @@ import { cn } from '@/lib/utils'
 export function CollegeMarker({
   model,
   selected,
+  starred = false,
   onSelect,
 }: {
   model: CollegeMarkerModel
   selected: boolean
+  /** On the owner's shortlist: shows a ★ badge. */
+  starred?: boolean
   onSelect: (id: string | null) => void
 }) {
   const { college, final: score, band, sizePx, isBackup, excluded } = model
@@ -34,7 +37,7 @@ export function CollegeMarker({
         aria-label={
           excluded
             ? `${college.name}, excluded city, not ranked`
-            : `${college.name}, score ${formatScore(score)}, ${college.verdict}`
+            : `${college.name}, score ${formatScore(score)}, ${college.verdict}${starred ? ', shortlisted' : ''}`
         }
         aria-pressed={selected}
         title={
@@ -43,7 +46,7 @@ export function CollegeMarker({
             : `${college.name} — ${formatScore(score)} (${college.verdict})`
         }
         className={cn(
-          'flex cursor-pointer items-center justify-center rounded-full border-2 text-[10px] font-bold shadow-md transition-transform',
+          'relative flex cursor-pointer items-center justify-center rounded-full border-2 text-[10px] font-bold shadow-md transition-transform',
           'hover:scale-110 focus-visible:scale-110 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-blue-600',
           isBackup ? 'border-dashed border-gray-900' : 'border-white',
           selected && 'scale-110 outline-3 outline-offset-2 outline-blue-600',
@@ -57,6 +60,14 @@ export function CollegeMarker({
         }}
       >
         {formatScore(score)}
+        {starred && (
+          <span
+            aria-hidden
+            className="absolute -top-2 -right-2 text-sm leading-none text-amber-400 [text-shadow:0_0_2px_#000]"
+          >
+            ★
+          </span>
+        )}
       </button>
     </Marker>
   )

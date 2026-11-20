@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { ConfidenceBadge, SourcedValue } from '@/components/common/SourcedValue'
+import { OwnerControls } from '@/components/tools/OwnerControls'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { formatInrRange } from '@/lib/format'
@@ -131,6 +132,7 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
       >
         Show stays nearby ({stayRadius} km)
       </Button>
+      <OwnerControls kind="college" id={c.id} name={c.name} />
     </div>
   )
 }

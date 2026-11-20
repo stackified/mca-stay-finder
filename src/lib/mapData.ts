@@ -62,10 +62,23 @@ export function markerSize(seats: number | null): number {
 
 // ---------- Stays, ring, localities (Phase 4) ----------
 
-export type StayProps = { id: string; name: string; type: StayType; color: string; symbol: string }
+export type StayProps = {
+  id: string
+  name: string
+  type: StayType
+  color: string
+  symbol: string
+  /** Own listing (SPEC §6.5). */
+  mine: boolean
+  /** On the shortlist (SPEC §6.3 "badge if shortlisted"). */
+  starred: boolean
+}
 
 /** Stay points for the clustered GL source. */
-export function staysToGeoJSON(rows: readonly StayResult[]): FeatureCollection<Point, StayProps> {
+export function staysToGeoJSON(
+  rows: readonly StayResult[],
+  starredKeys: ReadonlySet<string> = new Set(),
+): FeatureCollection<Point, StayProps> {
   return {
     type: 'FeatureCollection',
     features: rows.map(({ stay: s }) => ({
@@ -77,6 +90,8 @@ export function staysToGeoJSON(rows: readonly StayResult[]): FeatureCollection<P
         type: s.type,
         color: STAY_TYPE_COLOR[s.type],
         symbol: STAY_TYPE_SYMBOL[s.type],
+        mine: s.source === 'mine',
+        starred: starredKeys.has(`stay:${s.id}`),
       },
     })),
   }

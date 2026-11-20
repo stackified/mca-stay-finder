@@ -1,5 +1,8 @@
 import { useMemo, useState } from 'react'
 import { RentalLinks } from '@/components/common/RentalLinks'
+import { ShortlistStar } from '@/components/tools/OwnerControls'
+import { useStatusMap } from '@/store/useOwnerData'
+import { VISIT_STATUS_LABEL, entityKey } from '@/types/userData'
 import { Button } from '@/components/ui/button'
 import { formatInrRange } from '@/lib/format'
 import { FIT_LABEL, shortArea } from '@/lib/mapData'
@@ -25,6 +28,8 @@ export function StayList({ results }: { results: Results }) {
   const setFilters = useAppStore((s) => s.setFilters)
   const selectedStayId = useAppStore((s) => s.selectedStayId)
   const selectStay = useAppStore((s) => s.selectStay)
+  const openListingForm = useAppStore((s) => s.openListingForm)
+  const statusMap = useStatusMap()
   const selected = results.selected
 
   const rows = useMemo(() => {
@@ -110,10 +115,17 @@ export function StayList({ results }: { results: Results }) {
         >
           <p className="font-semibold">Few mapped places here.</p>
           <p>
-            OpenStreetMap does not map most PGs in India. Add your own listings (Phase 5) or search
-            the rental sites above.
+            OpenStreetMap does not map most PGs in India. Add your own listings or search the rental
+            sites above.
           </p>
           <div className="mt-1 flex flex-wrap gap-1">
+            <Button
+              size="xs"
+              variant="outline"
+              onClick={() => openListingForm({ collegeId: selected.college.id })}
+            >
+              + Add my listing
+            </Button>
             {filters.stayMaxDistanceKm < 10 && (
               <Button
                 size="xs"
@@ -138,7 +150,8 @@ export function StayList({ results }: { results: Results }) {
 
       <ul className="min-h-0 flex-1 divide-y overflow-y-auto" aria-label="Stays">
         {rows.map(({ stay: s, distanceKm }) => (
-          <li key={s.id}>
+          <li key={s.id} className="flex items-start">
+            <ShortlistStar kind="stay" id={s.id} name={s.name} className="mt-1" />
             <button
               type="button"
               onClick={() => selectStay(s.id)}
@@ -156,7 +169,17 @@ export function StayList({ results }: { results: Results }) {
                 {STAY_TYPE_SYMBOL[s.type]}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate font-medium">{s.name}</span>
+                <span className="block truncate font-medium">
+                  {s.name}
+                  {s.source === 'mine' && (
+                    <span className="ml-1 rounded border px-1 text-[9px] font-normal">mine</span>
+                  )}
+                  {(statusMap.get(entityKey('stay', s.id)) ?? 'not_visited') !== 'not_visited' && (
+                    <span className="ml-1 text-[10px] font-normal text-muted-foreground">
+                      · {VISIT_STATUS_LABEL[statusMap.get(entityKey('stay', s.id))!]}
+                    </span>
+                  )}
+                </span>
                 <span className="text-muted-foreground">
                   {STAY_TYPE_LABEL[s.type]} · {distanceKm.toFixed(1)} km · ~
                   {commuteMinutes(distanceKm)} min

@@ -24,6 +24,7 @@ import {
   toMarkerModels,
 } from '@/lib/mapData'
 import { useAppStore, type Results } from '@/store/useAppStore'
+import { useShortlistKeys } from '@/store/useOwnerData'
 import { CollegeCard } from './CollegeCard'
 import { CollegeMarker } from './CollegeMarker'
 import { Legend, type LayerVisibility } from './Legend'
@@ -70,7 +71,21 @@ export function MapView({ results }: { results: Results }) {
   )
   const markers = useMemo(() => toMarkerModels(results.rows), [results.rows])
   const selected = markers.find((m) => m.college.id === selectedCollegeId)
-  const staysGeoJSON = useMemo(() => staysToGeoJSON(results.stays), [results.stays])
+  const starred = useShortlistKeys()
+  const staysGeoJSON = useMemo(
+    () => staysToGeoJSON(results.stays, starred),
+    [results.stays, starred],
+  )
+  const picking = useAppStore((s) => s.listingForm.picking)
+  const pickLocation = useAppStore((s) => s.pickLocation)
+
+  // Esc cancels picking a listing location.
+  useEffect(() => {
+    if (!picking) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && pickLocation(null)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [picking, pickLocation])
   const selectedStay = results.stays.find((r) => r.stay.id === selectedStayId)
 
   const selLng = selected?.college.lng
@@ -117,6 +132,10 @@ export function MapView({ results }: { results: Results }) {
   }, [stayLng, stayLat])
 
   const onMapClick = (e: MapLayerMouseEvent) => {
+    if (picking) {
+      pickLocation({ lat: e.lngLat.lat, lng: e.lngLat.lng })
+      return
+    }
     const f = e.features?.[0]
     if (!f) {
       selectStay(null)
@@ -151,7 +170,8 @@ export function MapView({ results }: { results: Results }) {
         mapStyle={mapStyle}
         style={{ width: '100%', height: '100%' }}
         attributionControl={false}
-        interactiveLayerIds={layers.stays ? ['stay-clusters', 'stay-point'] : []}
+        interactiveLayerIds={layers.stays && !picking ? ['stay-clusters', 'stay-point'] : []}
+        cursor={picking ? 'crosshair' : undefined}
         onLoad={() => setStyleLoaded(true)}
         onError={(e) => {
           // Basemap failed before load → switch to the raster fallback (SPEC §5).
@@ -294,8 +314,16 @@ export function MapView({ results }: { results: Results }) {
             paint={{
               'circle-color': ['get', 'color'],
               'circle-radius': 8,
-              'circle-stroke-color': '#ffffff',
-              'circle-stroke-width': 1.5,
+              // Gold ring = shortlisted, black ring = own listing, white = OSM.
+              'circle-stroke-color': [
+                'case',
+                ['get', 'starred'],
+                '#f59e0b',
+                ['get', 'mine'],
+                '#111827',
+                '#ffffff',
+              ],
+              'circle-stroke-width': ['case', ['any', ['get', 'starred'], ['get', 'mine']], 3, 1.5],
             }}
           />
           <Layer
@@ -319,6 +347,7 @@ export function MapView({ results }: { results: Results }) {
               key={m.college.id}
               model={m}
               selected={m.college.id === selectedCollegeId}
+              starred={starred.has(`college:${m.college.id}`)}
               onSelect={selectCollege}
             />
           ))}
@@ -368,6 +397,17 @@ export function MapView({ results }: { results: Results }) {
           className="absolute top-2 left-1/2 z-10 -translate-x-1/2 rounded-md border bg-background/95 px-3 py-1.5 text-xs shadow"
         >
           No colleges match. See the Ranked tab for which filter to relax.
+        </div>
+      )}
+      {picking && (
+        <div
+          role="status"
+          className="absolute top-2 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-md border bg-background px-3 py-1.5 text-xs shadow"
+        >
+          Click the map where the listing is.
+          <button type="button" className="underline" onClick={() => pickLocation(null)}>
+            Cancel (Esc)
+          </button>
         </div>
       )}
       <Legend layers={layers} onChange={setLayers} defaultOpen={wide} />

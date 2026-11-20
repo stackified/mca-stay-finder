@@ -1,6 +1,10 @@
 import { ConfidenceBadge } from '@/components/common/SourcedValue'
 import { RentalLinks } from '@/components/common/RentalLinks'
+import { OwnerControls } from '@/components/tools/OwnerControls'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { deleteListing, getDb } from '@/store/db'
+import { useAppStore } from '@/store/useAppStore'
 import { osmUrl } from '@/lib/deeplinks'
 import { formatInrRange } from '@/lib/format'
 import { shortArea, stayArea } from '@/lib/mapData'
@@ -32,6 +36,8 @@ export function StayCard({
   const allIn = stayAllIn(s)
   const area = stayArea(s, localities, city)
   const road = roadKm(distanceKm)
+  const openListingForm = useAppStore((st) => st.openListingForm)
+  const selectStay = useAppStore((st) => st.selectStay)
   return (
     <div className="max-h-[60vh] w-64 overflow-y-auto text-xs text-foreground">
       <div className="mb-1 flex items-start gap-2 pr-4">
@@ -71,10 +77,10 @@ export function StayCard({
               {formatInrRange(allIn)}
               <ConfidenceBadge
                 sourced={{
-                  confidence: s.rent !== undefined ? 'official' : 'estimate',
+                  confidence: 'estimate',
                   source:
                     s.rent !== undefined
-                      ? 'Your listing'
+                      ? 'Your rent + the city’s monthly running costs (SPEC §11.4/11.5 estimates)'
                       : 'SPEC §11 locality/city range for this stay type — not a quoted price',
                 }}
               />
@@ -83,13 +89,49 @@ export function StayCard({
             'Unknown'
           )}
         </dd>
+        {s.rent !== undefined && (
+          <>
+            <dt className="text-muted-foreground">Rent (yours)</dt>
+            <dd className="text-right">
+              ₹{s.rent.toLocaleString('en-IN')}
+              {s.deposit !== undefined && ` · deposit ₹${s.deposit.toLocaleString('en-IN')}`}
+            </dd>
+          </>
+        )}
+        {s.source === 'mine' &&
+          (s.sharing || s.food !== undefined || s.ac !== undefined || s.furnished) && (
+            <>
+              <dt className="text-muted-foreground">Details</dt>
+              <dd className="text-right">
+                {[
+                  s.sharing,
+                  s.food === true ? 'food incl.' : s.food === false ? 'no food' : null,
+                  s.ac === true ? 'AC' : s.ac === false ? 'non-AC' : null,
+                  s.furnished &&
+                    { none: 'unfurnished', semi: 'semi-furnished', full: 'furnished' }[s.furnished],
+                ]
+                  .filter(Boolean)
+                  .join(' · ')}
+              </dd>
+            </>
+          )}
         {s.phone && (
           <>
-            <dt className="text-muted-foreground">Phone (OSM)</dt>
+            <dt className="text-muted-foreground">Phone{s.source === 'osm' ? ' (OSM)' : ''}</dt>
             <dd className="text-right">{s.phone}</dd>
           </>
         )}
       </dl>
+      {s.photoUrl && (
+        <a
+          href={s.photoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-2 block text-[11px] underline"
+        >
+          Photo (opens in new tab)
+        </a>
+      )}
 
       <RentalLinks
         area={area}
@@ -112,9 +154,30 @@ export function StayCard({
           </a>
         )}
       </p>
-      <p className="mt-1 text-[11px] text-muted-foreground">
-        ★ Shortlist, notes and visit status come in Phase 5.
-      </p>
+      {s.source === 'mine' && (
+        <div className="mt-2 flex gap-1">
+          <Button size="xs" variant="outline" onClick={() => openListingForm({ edit: s })}>
+            Edit listing
+          </Button>
+          <Button
+            size="xs"
+            variant="outline"
+            className="text-destructive"
+            onClick={() => {
+              if (
+                window.confirm(
+                  `Delete "${s.name}" and its notes? This cannot be undone (export first to keep a copy).`,
+                )
+              ) {
+                void deleteListing(getDb(), s.id).then(() => selectStay(null))
+              }
+            }}
+          >
+            Delete
+          </Button>
+        </div>
+      )}
+      <OwnerControls kind="stay" id={s.id} name={s.name} />
     </div>
   )
 }
