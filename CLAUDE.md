@@ -59,17 +59,17 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 
 ## Build phases (SPEC §14) — commit at the end of each
 
-| #   | Phase                                               | Status                                   |
-| --- | --------------------------------------------------- | ---------------------------------------- |
-| 0   | Setup, 3-column empty layout                        | done                                     |
-| 1   | Seed data JSON + zod schemas                        | done                                     |
-| 2   | Map, college markers, AQI circles, legend           | done                                     |
-| 3   | Filters, scoring, ranked table, URL sync, presets   | done                                     |
-| 4   | OSM stays, clustering, radius ring, deep links      | done                                     |
-| 5   | Dexie owner tools, export/import, budget calc       | done                                     |
-| 6   | Live AQI (Open-Meteo), amenities                    | done                                     |
-| 7   | Charts, compare, dark mode, mobile, a11y, data-info | done                                     |
-| 8   | Optional: Actions cron, Pages deploy                | built, not deployed (no GitHub repo yet) |
+| #   | Phase                                               | Status |
+| --- | --------------------------------------------------- | ------ |
+| 0   | Setup, 3-column empty layout                        | done   |
+| 1   | Seed data JSON + zod schemas                        | done   |
+| 2   | Map, college markers, AQI circles, legend           | done   |
+| 3   | Filters, scoring, ranked table, URL sync, presets   | done   |
+| 4   | OSM stays, clustering, radius ring, deep links      | done   |
+| 5   | Dexie owner tools, export/import, budget calc       | done   |
+| 6   | Live AQI (Open-Meteo), amenities                    | done   |
+| 7   | Charts, compare, dark mode, mobile, a11y, data-info | done   |
+| 8   | Optional: Actions cron, Pages deploy                | done   |
 
 ## Decisions log
 
@@ -179,7 +179,9 @@ Format: date — decision — reason.
 - 2026-11-20 — Bug fixed: `fetch-osm-amenities.ts` detected "run as main" with a hand-built `file:///` URL, which never matches on Linux (`file:////home/…`), so it would silently do nothing in Actions. Now `pathToFileURL`, like `seed.ts`.
 - 2026-11-20 — New `npm run data:all` = aqi + amenities (fresh) + stays (fresh).
 - 2026-11-20 — Free-tier facts: GitHub Pages on a free account needs a **public** repo; Actions minutes are free on public repos. A public repo publishes all files and the commit author emails.
-- 2026-11-20 — Verified locally: both OSM scripts run from cache (2,178 amenity rows; stays unchanged); YAML parses (Prettier); 250 tests pass. **Not verified:** the workflows on GitHub (no remote yet) and the live URL.
+- 2026-11-20 — Published: public repo `laveshparyani/mca-stay-finder`, live at https://laveshparyani.github.io/mca-stay-finder/. Commit author = GitHub noreply address (history rewritten before the first push, owner choice); this repo's git config uses it. First Deploy run passed (build + deploy). Live site checked: data, live AQI, map and service worker (scope `/mca-stay-finder/`) load. The refresh workflow has not run yet (first cron: 1 Dec 2026, or run it by hand in the Actions tab).
+- 2026-11-20 — Browser-pane note: when the pane is hidden, `requestAnimationFrame` does not run, so MapLibre never fires `load` and camera moves stall. Check map camera behaviour only with the pane visible.
+- 2026-11-20 — Verified locally: both OSM scripts run from cache (2,178 amenity rows; stays unchanged); YAML parses (Prettier); 250 tests pass. Before publishing, the workflows could not be run (no remote).
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 
