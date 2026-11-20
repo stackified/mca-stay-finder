@@ -24,6 +24,9 @@ jobs:
       contents: write
     outputs:
       sha: ${{ steps.commit.outputs.sha }}
+      aqi: ${{ steps.aqi.outcome }}
+      amenities: ${{ steps.amenities.outcome }}
+      stays: ${{ steps.stays.outcome }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -91,3 +94,30 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       ref: ${{ needs.refresh.outputs.sha }}
+
+  # Sources use continue-on-error so one busy server does not block the others. This job runs
+  # last and turns the run red when any source failed, so GitHub notifies the owner.
+  report:
+    needs: [refresh, deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fail when a source failed
+        env:
+          AQI: ${{ needs.refresh.outputs.aqi }}
+          AMENITIES: ${{ needs.refresh.outputs.amenities }}
+          STAYS: ${{ needs.refresh.outputs.stays }}
+          REFRESH: ${{ needs.refresh.result }}
+          DEPLOY: ${{ needs.deploy.result }}
+        run: |
+          echo "aqi=$AQI amenities=$AMENITIES stays=$STAYS refresh=$REFRESH deploy=$DEPLOY"
+          failed=0
+          for pair in "Live AQI snapshot:$AQI" "Amenities:$AMENITIES" "Stays:$STAYS"; do
+            if [ "${pair#*:}" != "success" ]; then
+              echo "::error::${pair%%:*} was not refreshed (${pair#*:}); its old file was kept."
+              failed=1
+            fi
+          done
+          if [ "$REFRESH" != "success" ] || [ "$DEPLOY" = "failure" ]; then failed=1; fi
+          exit $failed
