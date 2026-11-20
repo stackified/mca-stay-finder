@@ -1,19 +1,21 @@
+import { lazy, Suspense } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useAppStore, useResults, type ResultsTab } from '@/store/useAppStore'
+import { ComparePanel } from './ComparePanel'
 import { EmptyState } from './EmptyState'
 import { RankedTable } from './RankedTable'
 import { StayList } from './StayList'
 
-/** Results tabs from SPEC §6.4. Charts and Compare arrive in Phase 7. */
-const LATER = [
-  { id: 'charts', label: 'Charts', phase: 7 },
-  { id: 'compare', label: 'Compare', phase: 7 },
-] as const
+// Recharts is only needed on the Charts tab: load it in its own chunk.
+const ChartsPanel = lazy(() => import('./ChartsPanel').then((m) => ({ default: m.ChartsPanel })))
 
+/** Results tabs (SPEC §6.4): Ranked, Stays, Charts, Compare. */
 export function ResultsPanel() {
   const results = useResults()
   const tab = useAppStore((s) => s.resultsTab)
   const setTab = useAppStore((s) => s.setResultsTab)
+  const compareCount = useAppStore((s) => s.compareIds.length)
+  const loading = <p className="p-2 text-xs text-muted-foreground">Loading…</p>
   return (
     <Tabs
       value={tab}
@@ -23,15 +25,12 @@ export function ResultsPanel() {
       <TabsList className="w-full">
         <TabsTrigger value="ranked">Ranked</TabsTrigger>
         <TabsTrigger value="stays">Stays{results ? ` (${results.stays.length})` : ''}</TabsTrigger>
-        {LATER.map((t) => (
-          <TabsTrigger key={t.id} value={t.id}>
-            {t.label}
-          </TabsTrigger>
-        ))}
+        <TabsTrigger value="charts">Charts</TabsTrigger>
+        <TabsTrigger value="compare">Compare{compareCount ? ` (${compareCount})` : ''}</TabsTrigger>
       </TabsList>
       <TabsContent value="ranked" className="min-h-0 flex-1">
         {!results ? (
-          <p className="p-2 text-xs text-muted-foreground">Loading…</p>
+          loading
         ) : results.matchCount === 0 ? (
           <EmptyState impact={results.impact} />
         ) : (
@@ -39,13 +38,20 @@ export function ResultsPanel() {
         )}
       </TabsContent>
       <TabsContent value="stays" className="min-h-0 flex-1">
-        {results ? <StayList results={results} /> : null}
+        {results ? <StayList results={results} /> : loading}
       </TabsContent>
-      {LATER.map((t) => (
-        <TabsContent key={t.id} value={t.id} className="p-2 text-sm text-muted-foreground">
-          {t.label} comes in Phase {t.phase}.
-        </TabsContent>
-      ))}
+      <TabsContent value="charts" className="min-h-0 flex-1">
+        {results ? (
+          <Suspense fallback={loading}>
+            <ChartsPanel results={results} />
+          </Suspense>
+        ) : (
+          loading
+        )}
+      </TabsContent>
+      <TabsContent value="compare" className="min-h-0 flex-1">
+        {results ? <ComparePanel results={results} /> : loading}
+      </TabsContent>
     </Tabs>
   )
 }

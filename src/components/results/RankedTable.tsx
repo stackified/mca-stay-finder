@@ -14,7 +14,14 @@ import { ShortlistStar } from '@/components/tools/OwnerControls'
 import { Badge } from '@/components/ui/badge'
 import { rangeMid } from '@/lib/filters'
 import { formatInrRange } from '@/lib/format'
-import { SCORE_BAND_STYLE, formatScore, scoreBand, type RankedCollege } from '@/lib/scoring'
+import {
+  SCORE_BAND_STYLE,
+  formatScore,
+  scoreBand,
+  type RankedCollege,
+  type ScoreMode,
+} from '@/lib/scoring'
+import type { Sourced } from '@/types/domain'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
 
@@ -30,6 +37,7 @@ export function RankedTable({ rows }: { rows: RankedCollege[] }) {
   const sorting = useAppStore((s) => s.sorting)
   const setSorting = useAppStore((s) => s.setSorting)
   const selectedId = useAppStore((s) => s.selectedCollegeId)
+  const scoreMode = useAppStore((s) => s.scoreMode)
   const select = useAppStore((s) => s.selectCollege)
 
   const columns = useMemo(
@@ -202,6 +210,12 @@ export function RankedTable({ rows }: { rows: RankedCollege[] }) {
                         <ArrowUpDown className="size-3 opacity-30" />
                       )}
                     </button>
+                    {/* Column-level source badge (SPEC §13: every number has a source). */}
+                    {columnSource(h.id, scoreMode) && (
+                      <span className="ml-0.5 inline-flex align-middle">
+                        <ConfidenceBadge sourced={columnSource(h.id, scoreMode)!} />
+                      </span>
+                    )}
                   </th>
                 )
               })}
@@ -242,6 +256,43 @@ export function RankedTable({ rows }: { rows: RankedCollege[] }) {
       </table>
     </div>
   )
+}
+
+/** Source of the numbers in a column (cells with their own badge need none here). */
+function columnSource(id: string, mode: ScoreMode): Omit<Sourced<unknown>, 'value'> | null {
+  const scores =
+    mode === 'seed'
+      ? {
+          confidence: 'estimate' as const,
+          source: 'Seed sub-scores from research (SPEC §11.1)',
+          asOf: '2026-11',
+        }
+      : {
+          confidence: 'estimate' as const,
+          source:
+            'Computed from the data with the SPEC §10 formulas, relative to the visible colleges',
+        }
+  switch (id) {
+    case 'final':
+      return {
+        ...scores,
+        source: `Weighted sum of the four sub-scores (SPEC §10). ${scores.source}`,
+      }
+    case 'placement':
+    case 'air':
+    case 'cost':
+    case 'living':
+      return scores
+    case 'pgDouble':
+    case 'flat1bhk':
+      return {
+        confidence: 'estimate',
+        source: 'SPEC §11.3–11.5 typical 2026 market rates near campus — not quotes',
+        asOf: '2026-11',
+      }
+    default:
+      return null
+  }
 }
 
 const COLUMN_TITLES: Record<string, string> = {

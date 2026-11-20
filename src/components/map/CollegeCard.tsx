@@ -26,12 +26,16 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
   const stayRadius = useAppStore((st) => st.filters.stayMaxDistanceKm)
   const selectCollege = useAppStore((st) => st.selectCollege)
   const setResultsTab = useAppStore((st) => st.setResultsTab)
+  const compareIds = useAppStore((st) => st.compareIds)
+  const toggleCompare = useAppStore((st) => st.toggleCompare)
+  const inCompare = compareIds.includes(c.id)
+  const compareFull = compareIds.length >= 3
   const aqi = city?.annualAQI
   const liveSource = useAppStore((st) => st.live.result?.source)
   const liveCity = useAppStore((st) => (city ? st.live.result?.data?.byCity[city.id] : undefined))
   const fmt = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1))
   return (
-    <div className="max-h-[60vh] w-72 overflow-y-auto text-xs text-foreground">
+    <div className="max-h-[40dvh] w-[min(18rem,calc(100vw-7rem))] overflow-y-auto text-xs text-foreground">
       <div className="mb-1 flex items-start justify-between gap-2 pr-4">
         <h3 className="text-sm leading-tight font-semibold">{c.name}</h3>
         <Badge variant={c.type === 'VIT' ? 'outline' : 'secondary'} className="shrink-0">
@@ -63,6 +67,20 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
               : s
                 ? `P ${fmt(s.placement)} · A ${fmt(s.air)} · C ${fmt(s.cost)} · L ${fmt(s.living)} (${mode}, weights ${w.placement}/${w.air}/${w.cost}/${w.living})`
                 : 'Not enough data to score'}
+            {s && !excluded && (
+              <span className="ml-1 inline-flex align-middle">
+                <ConfidenceBadge
+                  sourced={{
+                    confidence: 'estimate',
+                    source:
+                      mode === 'seed'
+                        ? 'Seed sub-scores from research (SPEC §11.1); final = weighted sum (SPEC §10)'
+                        : 'Computed with the SPEC §10 formulas, relative to the visible colleges',
+                    asOf: '2026-11',
+                  }}
+                />
+              </span>
+            )}
           </p>
         </div>
       </div>
@@ -146,17 +164,34 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
         </ul>
       )}
 
-      <Button
-        size="sm"
-        variant="outline"
-        className="mt-2 w-full"
-        onClick={() => {
-          selectCollege(c.id)
-          setResultsTab('stays')
-        }}
-      >
-        Show stays nearby ({stayRadius} km)
-      </Button>
+      <div className="mt-2 flex gap-1">
+        <Button
+          size="sm"
+          variant="outline"
+          className="flex-1"
+          onClick={() => {
+            selectCollege(c.id)
+            setResultsTab('stays')
+          }}
+        >
+          Stays nearby ({stayRadius} km)
+        </Button>
+        <Button
+          size="sm"
+          variant={inCompare ? 'default' : 'outline'}
+          aria-pressed={inCompare}
+          disabled={!inCompare && compareFull}
+          title={
+            compareFull && !inCompare ? 'Compare holds 3 colleges; remove one first' : undefined
+          }
+          onClick={() => {
+            toggleCompare(c.id)
+            if (!inCompare) setResultsTab('compare')
+          }}
+        >
+          {inCompare ? '✓ Compare' : '+ Compare'}
+        </Button>
+      </div>
       <OwnerControls kind="college" id={c.id} name={c.name} />
     </div>
   )

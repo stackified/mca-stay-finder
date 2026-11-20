@@ -181,6 +181,7 @@ describe('other stay filters', () => {
       scoreMode: 'seed' as const,
       sorting: [],
       selectedCollegeId: null,
+      compareIds: [],
     }
     const q = encodeUrlState(state)
     expect(q).toContain('stay=2')

@@ -29,7 +29,13 @@ import { useShortlistKeys } from '@/store/useOwnerData'
 import { CollegeCard } from './CollegeCard'
 import { CollegeMarker } from './CollegeMarker'
 import { Legend, type LayerVisibility } from './Legend'
-import { FALLBACK_STYLE, INDIA_VIEW, LABEL_FONT, OPENFREEMAP_STYLE } from './mapStyle'
+import {
+  FALLBACK_STYLE,
+  INDIA_VIEW,
+  LABEL_FONT,
+  OPENFREEMAP_DARK_STYLE,
+  OPENFREEMAP_STYLE,
+} from './mapStyle'
 import { StayCard } from './StayCard'
 
 // Set it on the same instance that the map uses (passed below as `mapLib`).
@@ -47,7 +53,7 @@ const isBasemapFailure = (err: Error | undefined) =>
  * radius ring, localities, popups, legend.
  * Filter / weight changes update GeoJSON sources in place (setData); the map is never remounted.
  */
-export function MapView({ results }: { results: Results }) {
+export function MapView({ results, theme }: { results: Results; theme: 'light' | 'dark' }) {
   const mapRef = useRef<MapRef>(null)
   const data = useAppStore((s) => s.data)
   const radiusKm = useAppStore((s) => s.filters.stayMaxDistanceKm)
@@ -57,7 +63,13 @@ export function MapView({ results }: { results: Results }) {
   const selectStay = useAppStore((s) => s.selectStay)
   // Wide map: legend open, India shifted right of it. Narrow map: legend starts collapsed.
   const [wide] = useState(() => (document.querySelector('main')?.clientWidth ?? 0) >= WIDE_MAP_PX)
-  const [mapStyle, setMapStyle] = useState<string | StyleSpecification>(OPENFREEMAP_STYLE)
+  // OpenFreeMap light or dark vector style; the OSM raster fallback replaces it if it fails.
+  const [usingFallback, setUsingFallback] = useState(false)
+  const mapStyle: string | StyleSpecification = usingFallback
+    ? FALLBACK_STYLE
+    : theme === 'dark'
+      ? OPENFREEMAP_DARK_STYLE
+      : OPENFREEMAP_STYLE
   const [styleLoaded, setStyleLoaded] = useState(false)
   const [layers, setLayers] = useState<LayerVisibility>({
     cityAqi: true,
@@ -189,9 +201,9 @@ export function MapView({ results }: { results: Results }) {
         onLoad={() => setStyleLoaded(true)}
         onError={(e) => {
           // Basemap failed before load → switch to the raster fallback (SPEC §5).
-          if (!styleLoaded && mapStyle === OPENFREEMAP_STYLE && isBasemapFailure(e.error)) {
+          if (!styleLoaded && !usingFallback && isBasemapFailure(e.error)) {
             console.warn('OpenFreeMap failed, using OSM raster fallback:', e.error?.message)
-            setMapStyle(FALLBACK_STYLE)
+            setUsingFallback(true)
           } else {
             console.error('Map error:', e.error)
           }

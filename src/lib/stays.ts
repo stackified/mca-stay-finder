@@ -43,11 +43,11 @@ export const STAY_TYPE_SYMBOL: Record<StayType, string> = {
 export const STAY_TYPE_COLOR: Record<StayType, string> = {
   pg: '#7c3aed',
   hostel: '#db2777',
-  guest_house: '#ea580c',
+  guest_house: '#c2410c',
   apartment: '#2563eb',
-  bungalow: '#0d9488',
+  bungalow: '#0f766e',
   campus_hostel: '#4b5563',
-  unknown: '#9ca3af',
+  unknown: '#6b7280',
 }
 
 export const ALL_SHARING = ['single', 'double', 'triple'] as const

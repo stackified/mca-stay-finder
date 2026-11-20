@@ -169,7 +169,7 @@ export function scoreBand(score: number | null): ScoreBand {
 }
 
 export const SCORE_BAND_STYLE: Record<ScoreBand, { label: string; color: string; text: string }> = {
-  high: { label: '≥ 8', color: '#16a34a', text: '#ffffff' },
+  high: { label: '≥ 8', color: '#15803d', text: '#ffffff' },
   mid: { label: '6 – 8', color: '#eab308', text: '#1c1917' },
   low: { label: '< 6', color: '#dc2626', text: '#ffffff' },
   none: { label: 'No score', color: '#9ca3af', text: '#1c1917' },

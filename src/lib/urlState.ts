@@ -29,7 +29,11 @@ export type UrlState = {
   scoreMode: ScoreMode
   sorting: SortState
   selectedCollegeId: string | null
+  /** Up to 3 colleges in the Compare tab (SPEC §6.4). */
+  compareIds: string[]
 }
+
+export const MAX_COMPARE = 3
 
 export const DEFAULT_SCORE_MODE: ScoreMode = 'seed'
 
@@ -113,6 +117,7 @@ export function encodeUrlState(s: UrlState): string {
   if (s.scoreMode !== DEFAULT_SCORE_MODE) p.set('mode', s.scoreMode)
   if (s.sorting[0]) p.set('sort', `${s.sorting[0].id}.${s.sorting[0].desc ? 'desc' : 'asc'}`)
   if (s.selectedCollegeId) p.set('sel', s.selectedCollegeId)
+  if (s.compareIds.length) p.set('cmp', s.compareIds.join(','))
   // Keep commas readable in the address bar.
   return p.toString().replace(/%2C/g, ',')
 }
@@ -172,5 +177,9 @@ export function decodeUrlState(search: string): UrlState {
   const sel = p.get('sel')
   const selectedCollegeId = sel && /^[a-z0-9-]+$/.test(sel) ? sel : null
 
-  return { filters, weights, scoreMode, sorting, selectedCollegeId }
+  const compareIds = [
+    ...new Set((p.get('cmp') ?? '').split(',').filter((x) => /^[a-z0-9-]+$/.test(x))),
+  ].slice(0, MAX_COMPARE)
+
+  return { filters, weights, scoreMode, sorting, selectedCollegeId, compareIds }
 }

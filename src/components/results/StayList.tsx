@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { RentalLinks } from '@/components/common/RentalLinks'
+import { ConfidenceBadge } from '@/components/common/SourcedValue'
 import { ShortlistStar } from '@/components/tools/OwnerControls'
 import { useStatusMap } from '@/store/useOwnerData'
 import { VISIT_STATUS_LABEL, entityKey } from '@/types/userData'
@@ -73,6 +74,17 @@ export function StayList({ results }: { results: Results }) {
           <span className="font-semibold">{rows.length}</span> stays within{' '}
           {filters.stayMaxDistanceKm} km of {selected.college.name}
         </p>
+        <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
+          Costs: all-in ₹/month; distances straight-line
+          <ConfidenceBadge
+            sourced={{
+              confidence: 'estimate',
+              source:
+                'OSM places: SPEC §11 locality/city range for the stay type. Your listings: your rent + city running costs. Places © OpenStreetMap contributors.',
+              asOf: data.stays?.meta.generatedAt,
+            }}
+          />
+        </p>
         <div className="flex items-center gap-1" role="group" aria-label="Sort stays">
           <span className="text-muted-foreground">Sort:</span>
           {(['distance', 'cost'] as const).map((k) => (
@@ -98,7 +110,14 @@ export function StayList({ results }: { results: Results }) {
                 <li key={l.id}>
                   <span className="font-medium">{l.name}</span> · {l.distanceKm.min}–
                   {l.distanceKm.max} km · {FIT_LABEL[l.fit]} · PG {formatInrRange(l.pgDoubleAllIn)}{' '}
-                  · 1BHK {formatInrRange(l.flat1bhkAllIn)}
+                  · 1BHK {formatInrRange(l.flat1bhkAllIn)}{' '}
+                  <ConfidenceBadge
+                    sourced={{
+                      confidence: 'estimate',
+                      source: 'SPEC §11.6 locality all-in estimates; distances approximate',
+                      asOf: '2026-11',
+                    }}
+                  />
                   <div className="text-muted-foreground">{l.vibe}</div>
                   <RentalLinks area={shortArea(l.name)} city={cityName} type="pg" compact />
                 </li>
@@ -187,7 +206,9 @@ export function StayList({ results }: { results: Results }) {
               </span>
               <span className="shrink-0 text-right tabular-nums">
                 {formatInrRange(stayAllIn(s))}
-                <span className="block text-[10px] text-muted-foreground">est.</span>
+                <span className="block text-[10px] text-muted-foreground">
+                  {s.rent !== undefined ? 'your rent + est.' : 'estimate'}
+                </span>
               </span>
             </button>
           </li>

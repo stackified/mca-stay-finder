@@ -23,7 +23,12 @@ export type SeedData = {
   stays: StaysFile | null
   /** `null` when amenities.json is missing or invalid (Phase 6). */
   amenities: AmenitiesFile | null
+  /** True when the service worker answered from its cache (server or network unreachable). */
+  fromCache: boolean
 }
+
+/** Set by getJson when any data file came from the service-worker cache. */
+let servedFromCache = false
 
 export const dataUrl = (name: string) => `${import.meta.env.BASE_URL}data/${name}`
 
@@ -48,10 +53,12 @@ async function optionalStays(fetchFn: typeof fetch): Promise<StaysFile | null> {
 async function getJson(name: string, fetchFn: typeof fetch): Promise<unknown> {
   const res = await fetchFn(dataUrl(name))
   if (!res.ok) throw new Error(`${name}: HTTP ${res.status}`)
+  if (res.headers.get('x-sw-cache') === '1') servedFromCache = true
   return res.json()
 }
 
 export async function loadSeedData(fetchFn: typeof fetch = fetch): Promise<SeedData> {
+  servedFromCache = false
   const [cities, colleges, localities, stays, amenities] = await Promise.all([
     getJson('cities.json', fetchFn),
     getJson('colleges.json', fetchFn),
@@ -65,6 +72,7 @@ export async function loadSeedData(fetchFn: typeof fetch = fetch): Promise<SeedD
     localities: LocalitiesFileSchema.parse(localities),
     stays,
     amenities,
+    fromCache: servedFromCache,
   }
 }
 

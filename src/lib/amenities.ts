@@ -28,13 +28,13 @@ export const AMENITY_LABEL: Record<AmenityKind, string> = {
 }
 
 export const AMENITY_COLOR: Record<AmenityKind, string> = {
-  grocery: '#16a34a',
+  grocery: '#15803d',
   hospital: '#dc2626',
   pharmacy: '#e11d48',
   gym: '#9333ea',
-  bus_stop: '#0284c7',
+  bus_stop: '#0369a1',
   railway: '#1e3a8a',
-  restaurant: '#d97706',
+  restaurant: '#b45309',
 }
 
 /** Short text symbol on the map (colour is not the only signal). */

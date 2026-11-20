@@ -18,7 +18,7 @@ import {
 import { AmenityIndex, rowToAmenity } from '@/lib/amenities'
 import type { LiveResult } from '@/lib/liveAirCache'
 import { applyStayFilters } from '@/lib/stays'
-import { decodeUrlState, encodeUrlState } from '@/lib/urlState'
+import { MAX_COMPARE, decodeUrlState, encodeUrlState } from '@/lib/urlState'
 import type { Stay } from '@/types/domain'
 import { entityKey } from '@/types/userData'
 import { useListings, useStatusMap } from './useOwnerData'
@@ -53,6 +53,9 @@ export type AppState = {
   applyPreset: (id: string) => void
   /** Applies a saved custom preset (stored as a URL query string). */
   applyQuery: (query: string) => void
+  compareIds: string[]
+  /** Adds or removes a college from Compare (max 3; the oldest drops out). */
+  toggleCompare: (id: string) => void
 
   /** "Add my listing" form (SPEC §6.5). The draft survives while the owner picks a point on the map. */
   listingForm: { open: boolean; picking: boolean; draft: ListingDraft }
@@ -167,6 +170,12 @@ export const useAppStore = create<AppState>()((set) => ({
     if (preset) set(preset.build())
   },
   applyQuery: (query) => set(decodeUrlState(query)),
+  toggleCompare: (id) =>
+    set((s) => ({
+      compareIds: s.compareIds.includes(id)
+        ? s.compareIds.filter((x) => x !== id)
+        : [...s.compareIds, id].slice(-MAX_COMPARE),
+    })),
 
   listingForm: { open: false, picking: false, draft: emptyDraft() },
   openListingForm: (opts) =>

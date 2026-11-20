@@ -2,6 +2,8 @@ import type { StyleSpecification } from 'maplibre-gl'
 
 /** Primary basemap: OpenFreeMap (free, no key). SPEC §5. */
 export const OPENFREEMAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
+/** Dark mode basemap (checked to exist, HTTP 200, 2026-11-20). */
+export const OPENFREEMAP_DARK_STYLE = 'https://tiles.openfreemap.org/styles/dark'
 
 /** Glyphs for our own text layers; OpenFreeMap serves them without a key. */
 export const GLYPHS_URL = 'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf'

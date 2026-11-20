@@ -128,3 +128,28 @@
     @apply font-sans;
   }
 }
+
+/* MapLibre popups are white by default; the card text uses theme colours, so follow the theme. */
+.dark .maplibregl-popup-content {
+  background: var(--popover);
+  color: var(--popover-foreground);
+}
+.dark .maplibregl-popup-close-button {
+  color: var(--popover-foreground);
+}
+.dark .maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.dark .maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.dark .maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--popover);
+}
+.dark .maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.dark .maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.dark .maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--popover);
+}
+.dark .maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--popover);
+}
+.dark .maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--popover);
+}

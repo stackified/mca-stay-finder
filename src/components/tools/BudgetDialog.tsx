@@ -1,5 +1,6 @@
 import { useId, useState } from 'react'
 import { Calculator } from 'lucide-react'
+import { ConfidenceBadge } from '@/components/common/SourcedValue'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -154,7 +155,18 @@ export function BudgetDialog() {
                 <td className="py-1 text-right tabular-nums">{lakh(result.furnishing)}</td>
               </tr>
               <tr className="font-semibold">
-                <td className="py-1">Total</td>
+                <td className="py-1">
+                  <span className="inline-flex items-center gap-1">
+                    Total
+                    <ConfidenceBadge
+                      sourced={{
+                        confidence: 'estimate',
+                        source: `SPEC §11.3–11.5 cost tables for ${city?.name}; deposit/brokerage from the city's typical months; furnishing is your estimate`,
+                        asOf: '2026-11',
+                      }}
+                    />
+                  </span>
+                </td>
                 <td className="py-1 text-right tabular-nums">{fmt(result.total)}</td>
               </tr>
             </tbody>

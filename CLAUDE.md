@@ -68,7 +68,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | 4   | OSM stays, clustering, radius ring, deep links      | done    |
 | 5   | Dexie owner tools, export/import, budget calc       | done    |
 | 6   | Live AQI (Open-Meteo), amenities                    | done    |
-| 7   | Charts, compare, dark mode, mobile, a11y, data-info | pending |
+| 7   | Charts, compare, dark mode, mobile, a11y, data-info | done    |
 | 8   | Optional: Actions cron, Pages deploy                | pending |
 
 ## Decisions log
@@ -159,6 +159,17 @@ Format: date — decision — reason.
 - 2026-11-20 — Verified in the browser: live data loads and is cached (reload makes no Open-Meteo request); `live=100` keeps exactly the 7 campuses whose cities are ≤ 100; with Open-Meteo blocked, refresh falls back to old cache → (cache cleared) snapshot → (snapshot blocked) "unavailable" with the live filter paused; unblocking + Retry returns to live.
 - 2026-11-20 — Amenities result: 2,178 rows (113 kB) for 17 campuses. Coverage varies widely: NIT Patna 319, IIIT Bhopal 304, MANIT 286, NIT Warangal 251 … VIT Bhopal 10, NIT Agartala 1 (only a railway station). Verified in the browser: at NIT Warangal (10 km ring) "Grocery within 500 m" keeps exactly the 2 stays a brute-force distance check finds; the layer draws for the selected campus.
 - 2026-11-20 — Browser testing note: in the scaled Browser pane, coordinate clicks inside scrolling panels/popups often miss; DOM `.click()` on the real control (which runs the app's own handler) was used where a coordinate click failed.
+
+### Phase 7 (charts, compare, dark mode, mobile, a11y, data info)
+
+- 2026-11-20 — Results panel has 4 tabs: Ranked, Stays, Charts (lazy chunk, Recharts), Compare. Charts: monthly cost stacked bars per city (PG double / 1BHK toggle), AQI annual vs live bars, score radar for the compared (or selected) colleges. Every chart has a source badge and a "Data table" `<details>` (screen readers, no colour-only reading). Chart data is built by pure functions in `lib/charts.ts`.
+- 2026-11-20 — Compare: up to 3 colleges (`MAX_COMPARE`), URL key `cmp`; "+ Compare" on the college card, picker in the tab. Rows show values with confidence badges.
+- 2026-11-20 — Dark mode: choice system → light → dark (button cycles), localStorage key `mca-theme` (per-device convenience), applied in `index.html` before first paint. Map uses OpenFreeMap `dark` style in dark mode. MapLibre popups are white by default, so `index.css` themes `.maplibregl-popup-*` under `.dark`.
+- 2026-11-20 — Mobile (< 1024 px): full-height map plus a bar BELOW the map with "Filters (n)" and "Results (n)" buttons that open bottom sheets. The bar is outside the map so it never covers the map attribution. shadcn Sheet sets `data-[side=bottom]:h-auto`; a plain `h-[80dvh]` loses on specificity, so use `data-[side=bottom]:h-[80dvh]`. College card width = `min(18rem, 100vw − 7rem)`, height ≤ 40 dvh.
+- 2026-11-20 — Accessibility: "Skip to results" link, landmarks, aria-labels on icon buttons, letters on markers (not colour only). `tests/a11y.test.ts` checks WCAG AA contrast (4.5:1 text, 3:1 marker fill vs white letter) for band, stay-type, amenity and chart colours; several colours were darkened to pass.
+- 2026-11-20 — Badge audit (§13 item 9): Ranked table column headers, Stays cost line, locality ranges and the budget total now carry a confidence badge. Data info dialog ("?" button) lists every dataset with size, last refresh and source, the confidence legend and known caveats.
+- 2026-11-20 — Offline (§13 item 10): hand-written `public/sw.js`, registered in production only. Same-origin files: network first, cache fallback; cached `data/*.json` answers carry `x-sw-cache: 1`, `loadSeedData` sets `fromCache`, and the banner says "app server unreachable" or "you are offline" with the data date. Tiles (OpenFreeMap, OSM): stale-while-revalidate, max 1,500 entries. Tiles loaded before the worker first controls the page are not cached; areas viewed after that are.
+- 2026-11-20 — Verified in the browser: Charts (3 charts, radar with 3 series) and Compare (3 colleges, 30 badges) render; theme cycle and dark map work; mobile 375×812 layout has no sideways scroll, sheets are 80 % high; data info dialog opens. Offline: production preview loaded twice, server stopped, reload → app and all 14 colleges load from cache with the banner. Only `.env.example` is tracked; no keys in the code.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 

@@ -257,6 +257,7 @@ describe('URL state', () => {
     scoreMode: 'seed',
     sorting: [],
     selectedCollegeId: null,
+    compareIds: [],
   }
 
   it('defaults encode to an empty query', () => {
@@ -280,9 +281,11 @@ describe('URL state', () => {
       scoreMode: 'computed',
       sorting: [{ id: 'pgDouble', desc: false }],
       selectedCollegeId: 'nit-warangal',
+      compareIds: ['nit-warangal', 'vit-vellore'],
     }
     const q = encodeUrlState(s)
     expect(q).toContain('aqi=100')
+    expect(q).toContain('cmp=nit-warangal,vit-vellore')
     expect(decodeUrlState(q)).toEqual(s)
   })
 
