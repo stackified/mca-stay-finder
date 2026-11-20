@@ -22,6 +22,9 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
   const { college: c, city, final: score, band, scores: s, rank, excluded } = model
   const mode = useAppStore((st) => st.scoreMode)
   const w = useAppStore((st) => st.weights)
+  const stayRadius = useAppStore((st) => st.filters.stayMaxDistanceKm)
+  const selectCollege = useAppStore((st) => st.selectCollege)
+  const setResultsTab = useAppStore((st) => st.setResultsTab)
   const aqi = city?.annualAQI
   const fmt = (v: number) => (Number.isInteger(v) ? String(v) : v.toFixed(1))
   return (
@@ -117,8 +120,16 @@ export function CollegeCard({ model }: { model: CollegeMarkerModel }) {
         </ul>
       )}
 
-      <Button size="sm" variant="outline" className="mt-2 w-full" disabled title="Comes in Phase 4">
-        Show stays nearby
+      <Button
+        size="sm"
+        variant="outline"
+        className="mt-2 w-full"
+        onClick={() => {
+          selectCollege(c.id)
+          setResultsTab('stays')
+        }}
+      >
+        Show stays nearby ({stayRadius} km)
       </Button>
     </div>
   )

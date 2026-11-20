@@ -65,7 +65,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 | 1   | Seed data JSON + zod schemas                        | done    |
 | 2   | Map, college markers, AQI circles, legend           | done    |
 | 3   | Filters, scoring, ranked table, URL sync, presets   | done    |
-| 4   | OSM stays, clustering, radius ring, deep links      | pending |
+| 4   | OSM stays, clustering, radius ring, deep links      | done    |
 | 5   | Dexie owner tools, export/import, budget calc       | pending |
 | 6   | Live AQI (Open-Meteo), amenities                    | pending |
 | 7   | Charts, compare, dark mode, mobile, a11y, data-info | pending |
@@ -115,6 +115,26 @@ Format: date — decision — reason.
 - 2026-11-20 — URL keys: `type inst pmin pmax rate high conf dur seats sf hostel fees aqi poor cost living reg home excl stay w mode sort sel`. Only non-defaults are written.
 - 2026-11-20 — `@tanstack/react-table` pinned to v8 (v9 has a new API). `src/components/ui/slider.tsx` has one local addition: `thumbLabels` (accessible names). The `cn` import in shadcn files is the official `cn` package from shadcn-ui.
 - 2026-11-20 — Measured: a filter change updates map + table in ~90 ms in the dev build (target < 300 ms).
+
+### Geocode (before Phase 4)
+
+- 2026-11-20 — `npm run data:geocode [-- --apply]` checks coordinates with Nominatim (1 req/s, User-Agent `mca-stay-finder/1.0 (personal)`, cache `scripts/geocode-cache.json`, report `scripts/geocode-report.md`). Accepted points go to `scripts/seed/coords-verified.json`; `seed.ts` applies them and writes a `coordsNote` on every item.
+- 2026-11-20 — Acceptance rules are strict on purpose. Loose rules matched a bus stop named "NIT Patna", an airport, a pond, a school and an "MP Nagar" in Kolar 7.6 km away. Rules: campus = university/college/educational_institution ≤ 25 km; locality = place object, moved ≤ 5 km (12 km for "too-far"), within the SPEC distance band +3 km; city = city/town (or administrative centroid ≤ 3 km).
+- 2026-11-20 — Result: 37 of 51 verified, including 13 of 14 NIT/VIT campuses (moved 0.05–0.54 km). Not verified, seed kept: NIT Patna (only a bus stop found; campus may be at Bihta — verify where MCA runs), IIIT Bhopal / Vadodara-Diu / Vadodara-Gandhinagar (not in OSM search), and 9 localities.
+
+### Phase 4 (stays)
+
+- 2026-11-20 — `npm run data:osm` (`scripts/fetch-osm-stays.ts`, pure helpers in `scripts/osm-stays-lib.ts`). One Overpass query per campus (IIIT Bhopal shares MANIT's point), ≥ 5 s apart, back-off 15→240 s on 429/5xx, raw answers cached in `scripts/.cache/overpass` (git-ignored).
+- 2026-11-20 — Overpass gotchas: (1) errors such as timeouts come back as HTTP 200 with a `remark` and no elements — treated as errors and never cached; (2) the query does ONE spatial search for named objects (`->.named`), then filters `nwr.named[...]` (a set filter needs the `nwr` prefix, `.named[...]` is HTTP 400); SPEC's four separate searches timed out on the busy public server; (3) only overpass-api.de was reachable from this machine (private.coffee and kumi.systems timed out).
+- 2026-11-20 — Unnamed places are dropped. Type mapping follows SPEC §9, plus: a named `building=dormitory` within 2 km of campus = `campus_hostel`. Gender comes from the name (boys/girls/ladies/co-living). `allInEstimate` = nearest SPEC §11.6 locality within 2 km, else the city range for that stay type (estimate, not a price).
+- 2026-11-20 — Stay filters live in `lib/stays.ts` and are part of `FilterState` (so presets and the URL cover them; URL keys `st stay smin bmin bmax rmin rmax share food ac furn gender src`). Type always applies (default PG + flat + bungalow); other filters only when changed. Unknown values fail an active filter — OSM has no price/food/AC/furnishing data, so those filters only match own listings (Phase 5); the UI says so. Budget = overlap of the stay's range with the budget. Sharing applies to PG/hostel only. Gender "any" also matches "not stated".
+- 2026-11-20 — Distance: with a selected campus, stays within the ring of that campus; with none, within the radius of any visible campus. Commute estimate = straight line × 1.3 at 20 km/h (walk at 5 km/h shown when ≤ 2.5 road km). No routing API.
+- 2026-11-20 — Map: stays are a clustered GeoJSON source (clusterMaxZoom 14, radius 40) with a letter per type (P H G A B C ?) so colour is not the only signal; clicking a cluster zooms in. Selecting a college fits its ring in view; moving the distance slider resizes the ring without moving the camera. Localities of the selected campus show with their fit label.
+- 2026-11-20 — Rental deep links: SPEC wants each site's own search URL only if the pattern is confirmed, but confirming would mean fetching the sites, which SPEC forbids. So every link is the SPEC fallback: a Google search limited to the site (`site:nobroker.in` etc.) plus one open Google search. `lib/deeplinks.ts`.
+- 2026-11-20 — `lib/geo.ts` gained `destination()` and `circleRing()` (own code, no Turf dependency needed so far).
+- 2026-11-20 — **OSM data quality filter** (`isNotAStay` in `scripts/osm-stays-lib.ts`). The raw name-based matching produced false positives: schools/colleges with "Boys"/"Girls"/"PG" in the name ("SAM Girls' College", "TH.H.N.SINGH PG COLLEGE"), footpaths ("Route to 1.8k Hostel"), offices, a welding shop, staff housing ("Director's Bunglow"). Dropped: objects with highway/shop/office/leisure/landuse/place/… keys, non-housing amenities, and names with school/office/road/temple/quarters/shop/… — unless tagged tourism=hostel/guest_house/apartment. Kept: `landuse=residential` areas named like a housing society ("Tulsi Apartments"). Each rule has a unit test with the real example.
+- 2026-11-20 — Result (2026-11-20): 1,005 stays — apartment 514, hostel 204, bungalow 90, unknown 66, guest house 63, campus hostel 62, **PG only 6**. After removing schools, OSM maps almost no PGs: own listings (Phase 5) and the rental links are the real source, as SPEC §17 warns. NIT Warangal: 4 stays within 5 km at default types; its 18 campus hostel blocks are found correctly.
+- 2026-11-20 — Verified in the browser (SPEC §13): item 2 (select NIT Warangal → ring fitted, list shows only the 4 stays inside), item 3 (slider 10 km → 7 stays, 2.5 km → exactly the 2 at 2.3/2.4 km; ring, markers, list, status bar and URL agree). Item 6 is covered by unit tests.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 

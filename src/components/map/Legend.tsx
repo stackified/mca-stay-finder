@@ -1,7 +1,20 @@
 import { NAQI_BANDS } from '@/lib/naqi'
 import { SCORE_BAND_STYLE, type ScoreBand } from '@/lib/scoring'
+import { ALL_STAY_TYPES, STAY_TYPE_COLOR, STAY_TYPE_LABEL, STAY_TYPE_SYMBOL } from '@/lib/stays'
 
-export type LayerVisibility = { cityAqi: boolean; colleges: boolean }
+export type LayerVisibility = {
+  cityAqi: boolean
+  colleges: boolean
+  stays: boolean
+  localities: boolean
+}
+
+const LAYERS: { key: keyof LayerVisibility; label: string }[] = [
+  { key: 'colleges', label: 'Colleges' },
+  { key: 'stays', label: 'Stays (clustered)' },
+  { key: 'localities', label: 'Localities (selected campus)' },
+  { key: 'cityAqi', label: 'City air quality (annual)' },
+]
 
 const SCORE_ORDER: ScoreBand[] = ['high', 'mid', 'low', 'none']
 
@@ -36,7 +49,7 @@ export function Legend({
   return (
     <details
       open={defaultOpen}
-      className="group absolute top-2 left-2 z-10 max-h-[calc(100%-1rem)] w-44 overflow-x-hidden overflow-y-auto rounded-md border bg-background/95 px-2 py-1.5 text-[10.5px] leading-tight shadow-md"
+      className="group absolute top-2 left-2 z-10 max-h-[calc(100%-1rem)] w-48 overflow-x-hidden overflow-y-auto rounded-md border bg-background/95 px-2 py-1.5 text-[10.5px] leading-tight shadow-md"
     >
       <summary className="cursor-pointer font-semibold select-none group-open:mb-1">
         Layers &amp; legend
@@ -44,22 +57,16 @@ export function Legend({
 
       <fieldset className="mb-1.5 space-y-0.5">
         <legend className="sr-only">Layers</legend>
-        <label className="flex items-center gap-1.5">
-          <input
-            type="checkbox"
-            checked={layers.colleges}
-            onChange={(e) => onChange({ ...layers, colleges: e.target.checked })}
-          />
-          Colleges
-        </label>
-        <label className="flex items-center gap-1.5">
-          <input
-            type="checkbox"
-            checked={layers.cityAqi}
-            onChange={(e) => onChange({ ...layers, cityAqi: e.target.checked })}
-          />
-          City air quality (annual)
-        </label>
+        {LAYERS.map((l) => (
+          <label key={l.key} className="flex items-center gap-1.5">
+            <input
+              type="checkbox"
+              checked={layers[l.key]}
+              onChange={(e) => onChange({ ...layers, [l.key]: e.target.checked })}
+            />
+            {l.label}
+          </label>
+        ))}
       </fieldset>
 
       {layers.colleges && (
@@ -76,6 +83,27 @@ export function Legend({
           <p className="flex items-center gap-1">
             <Swatch dashed /> VIT backup · size = seats
           </p>
+        </div>
+      )}
+
+      {layers.stays && (
+        <div className="mb-1.5">
+          <p className="font-semibold">Stays</p>
+          <ul>
+            {ALL_STAY_TYPES.map((t) => (
+              <li key={t} className="flex items-center gap-1">
+                <span
+                  aria-hidden
+                  className="inline-flex size-3 items-center justify-center rounded-full text-[8px] font-bold text-white"
+                  style={{ backgroundColor: STAY_TYPE_COLOR[t] }}
+                >
+                  {STAY_TYPE_SYMBOL[t]}
+                </span>
+                {STAY_TYPE_LABEL[t]}
+              </li>
+            ))}
+          </ul>
+          <p className="text-muted-foreground">Dashed ring = max distance</p>
         </div>
       )}
 

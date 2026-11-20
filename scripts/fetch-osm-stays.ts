@@ -1,0 +1,143 @@
+/**
+ * fetch-osm-stays.ts — SPEC §9. For each campus, asks Overpass for places to stay within 10 km,
+ * normalises them to `Stay`, dedupes, and writes public/data/stays.osm.json.
+ *
+ *   npm run data:osm             (uses cached Overpass answers in scripts/.cache when present)
+ *   npm run data:osm -- --fresh  (ignore the cache)
+ *
+ * Rate limits: one query at a time, ≥ 5 s between queries, retries with back-off on 429/504.
+ * Data © OpenStreetMap contributors (ODbL).
+ */
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { fileSchema, StaySchema } from '../src/types/domain.ts'
+import { buildSeed, DATA_DIR } from './seed.ts'
+import { dedupeStays, overpassQuery, toStay, type OsmElement } from './osm-stays-lib.ts'
+
+const DIR = path.dirname(fileURLToPath(import.meta.url))
+const CACHE_DIR = path.join(DIR, '.cache', 'overpass')
+const ENDPOINT = 'https://overpass-api.de/api/interpreter'
+const USER_AGENT = 'mca-stay-finder/1.0 (personal)'
+const PAUSE_MS = 5000
+// Retry waits for a busy server (429/5xx/remark) grow from 15 s: 15, 30, 60, 120, 240.
+const backoff = (attempt: number) => 15_000 * 2 ** (attempt - 1)
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+async function overpass(query: string): Promise<OsmElement[]> {
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    let res: Response
+    try {
+      res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'User-Agent': USER_AGENT, 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({ data: query }),
+        signal: AbortSignal.timeout(240_000),
+      })
+    } catch (err) {
+      const wait = 15_000 * 2 ** (attempt - 1)
+      console.warn(
+        `  Overpass network error (${String(err).slice(0, 80)}); retry ${attempt} in ${wait / 1000}s`,
+      )
+      await sleep(wait)
+      continue
+    }
+    if (res.ok) {
+      const body = (await res.json()) as { elements: OsmElement[]; remark?: string }
+      // Overpass reports timeouts / memory errors as HTTP 200 with a `remark` and no elements.
+      if (body.remark) {
+        const wait = backoff(attempt)
+        console.warn(
+          `  Overpass remark: ${body.remark.slice(0, 160)}; retry ${attempt} in ${wait / 1000}s`,
+        )
+        await sleep(wait)
+        continue
+      }
+      return body.elements
+    }
+    if (res.status === 429 || res.status >= 500) {
+      const wait = backoff(attempt)
+      console.warn(`  Overpass HTTP ${res.status}; retry ${attempt} in ${wait / 1000}s`)
+      await sleep(wait)
+      continue
+    }
+    throw new Error(`Overpass HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`)
+  }
+  throw new Error('Overpass: too many retries')
+}
+
+async function main() {
+  const fresh = process.argv.includes('--fresh')
+  mkdirSync(CACHE_DIR, { recursive: true })
+  const seed = buildSeed()
+  const cities = new Map(seed['cities.json'].data.map((c) => [c.id, c]))
+  const localities = seed['localities.json'].data
+
+  // Campuses at the same point (IIIT Bhopal runs on the MANIT campus) are queried once.
+  const seen = new Set<string>()
+  const campuses = seed['colleges.json'].data.filter((c) => {
+    const k = `${c.lat.toFixed(3)},${c.lng.toFixed(3)}`
+    if (seen.has(k)) return false
+    seen.add(k)
+    return true
+  })
+
+  const all = []
+  let queried = 0
+  for (const c of campuses) {
+    const cacheFile = path.join(CACHE_DIR, `${c.id}.json`)
+    let elements: OsmElement[]
+    if (!fresh && existsSync(cacheFile)) {
+      elements = JSON.parse(readFileSync(cacheFile, 'utf8')) as OsmElement[]
+    } else {
+      if (queried > 0) await sleep(PAUSE_MS)
+      elements = await overpass(overpassQuery(c.lat, c.lng))
+      writeFileSync(cacheFile, JSON.stringify(elements))
+      queried++
+    }
+    const stays = elements
+      .map((el) =>
+        toStay(
+          el,
+          c,
+          cities.get(c.cityId),
+          localities.filter((l) => l.collegeId === c.id),
+        ),
+      )
+      .filter((s) => s !== null)
+    console.log(
+      `${c.id.padEnd(26)} ${String(elements.length).padStart(5)} OSM objects → ${stays.length} named stays`,
+    )
+    all.push(...stays)
+  }
+
+  const data = dedupeStays(all)
+  const file = fileSchema(StaySchema).parse({
+    meta: {
+      generatedAt: new Date().toISOString().slice(0, 10),
+      generator: 'scripts/fetch-osm-stays.ts',
+      sources: ['© OpenStreetMap contributors (Overpass API), ODbL'],
+      notes: [
+        'OSM maps only a fraction of real PGs in India — add your own listings and use the rental-site links.',
+        'allInEstimate is a SPEC §11 locality/city range by stay type, not a quoted price.',
+      ],
+    },
+    data,
+  })
+  writeFileSync(path.join(DATA_DIR, 'stays.osm.json'), `${JSON.stringify(file)}\n`)
+  const byType = data.reduce<Record<string, number>>(
+    (m, s) => ((m[s.type] = (m[s.type] ?? 0) + 1), m),
+    {},
+  )
+  console.log(
+    `wrote public/data/stays.osm.json: ${data.length} stays`,
+    byType,
+    `(${queried} Overpass queries)`,
+  )
+}
+
+main().catch((err: unknown) => {
+  console.error(err instanceof Error ? err.message : err)
+  process.exit(1)
+})

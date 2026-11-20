@@ -8,7 +8,7 @@ export function StatusBar() {
     <footer className="flex flex-wrap items-center justify-between gap-2 border-t px-4 py-1.5 text-xs text-muted-foreground">
       <span aria-live="polite">
         {results
-          ? `${results.matchCount} colleges · ${new Set(results.rows.filter((r) => !r.excluded).map((r) => r.college.cityId)).size} cities match · stays from Phase 4`
+          ? `${results.matchCount} colleges · ${new Set(results.rows.filter((r) => !r.excluded).map((r) => r.college.cityId)).size} cities · ${results.stays.length} stays match`
           : 'Loading…'}
       </span>
       <span>

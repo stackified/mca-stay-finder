@@ -21,5 +21,32 @@ export function haversineKm(a: LatLng, b: LatLng): number {
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(h)))
 }
 
+/** Point `km` away from `from` on a bearing (degrees from north). Spherical earth. */
+export function destination(from: LatLng, km: number, bearingDeg: number): LatLng {
+  const rad = Math.PI / 180
+  const d = km / EARTH_RADIUS_KM
+  const b = bearingDeg * rad
+  const lat1 = from.lat * rad
+  const lng1 = from.lng * rad
+  const lat2 = Math.asin(Math.sin(lat1) * Math.cos(d) + Math.cos(lat1) * Math.sin(d) * Math.cos(b))
+  const lng2 =
+    lng1 +
+    Math.atan2(
+      Math.sin(b) * Math.sin(d) * Math.cos(lat1),
+      Math.cos(d) - Math.sin(lat1) * Math.sin(lat2),
+    )
+  return { lat: lat2 / rad, lng: ((lng2 / rad + 540) % 360) - 180 }
+}
+
+/** Closed ring polygon (GeoJSON order [lng, lat]) of radius `km` around `centre`. */
+export function circleRing(centre: LatLng, km: number, steps = 96): [number, number][] {
+  const ring: [number, number][] = []
+  for (let i = 0; i <= steps; i++) {
+    const p = destination(centre, km, (i / steps) * 360)
+    ring.push([p.lng, p.lat])
+  }
+  return ring
+}
+
 /** Road-distance fallback when no routing API is used (SPEC §5: straight line × 1.3). */
 export const ROAD_FACTOR = 1.3

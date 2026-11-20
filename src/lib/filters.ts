@@ -10,6 +10,7 @@
  *   greyed and never ranked (SPEC §13).
  */
 import type { City, College, CollegeType, Confidence, Region } from '@/types/domain'
+import { DEFAULT_STAY_FILTERS, type StayFilterState } from './stays'
 
 export const ALL_TYPES: CollegeType[] = ['NIT', 'VIT', 'IIIT']
 export const ALL_CONFIDENCE: Confidence[] = ['official', 'aggregator', 'estimate', 'none']
@@ -41,9 +42,7 @@ export type FilterState = {
   regions: Region[]
   homeDistanceMaxKm: number | null
   showExcluded: boolean
-  // C. Stay (used from Phase 4; kept here so presets and the URL can set it)
-  stayMaxDistanceKm: number
-}
+} & StayFilterState // C. Stay filters (lib/stays.ts)
 
 /** Owner defaults (SPEC §2, §6.2). */
 export const DEFAULT_FILTERS: Readonly<FilterState> = {
@@ -66,7 +65,7 @@ export const DEFAULT_FILTERS: Readonly<FilterState> = {
   regions: [...ALL_REGIONS],
   homeDistanceMaxKm: null,
   showExcluded: false,
-  stayMaxDistanceKm: 5,
+  ...DEFAULT_STAY_FILTERS,
 }
 
 export const rangeMid = (r: { min: number; max: number }) => (r.min + r.max) / 2

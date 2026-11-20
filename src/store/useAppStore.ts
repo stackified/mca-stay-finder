@@ -15,6 +15,7 @@ import {
   type WeightKey,
   type Weights,
 } from '@/lib/scoring'
+import { applyStayFilters } from '@/lib/stays'
 import { decodeUrlState, encodeUrlState } from '@/lib/urlState'
 
 export type AppState = {
@@ -24,8 +25,13 @@ export type AppState = {
   scoreMode: ScoreMode
   sorting: SortState
   selectedCollegeId: string | null
+  /** Not in the URL: transient UI state. */
+  selectedStayId: string | null
+  resultsTab: ResultsTab
 
   setData: (data: SeedData) => void
+  selectStay: (id: string | null) => void
+  setResultsTab: (tab: ResultsTab) => void
   setFilters: (patch: Partial<FilterState>) => void
   resetFilters: (keys?: (keyof FilterState)[]) => void
   setWeight: (key: WeightKey, value: number) => void
@@ -39,11 +45,17 @@ export type AppState = {
 const fromUrl = () => decodeUrlState(typeof window === 'undefined' ? '' : window.location.search)
 const defaults = () => decodeUrlState('')
 
+export type ResultsTab = 'ranked' | 'stays' | 'charts' | 'compare'
+
 export const useAppStore = create<AppState>()((set) => ({
   data: null,
+  selectedStayId: null,
+  resultsTab: 'ranked',
   ...fromUrl(),
 
   setData: (data) => set({ data }),
+  selectStay: (selectedStayId) => set({ selectedStayId }),
+  setResultsTab: (resultsTab) => set({ resultsTab }),
   setFilters: (patch) => set((s) => ({ filters: { ...s.filters, ...patch } })),
   resetFilters: (keys) =>
     set((s) => {
@@ -57,7 +69,8 @@ export const useAppStore = create<AppState>()((set) => ({
   resetWeights: () => set({ weights: defaults().weights }),
   setScoreMode: (scoreMode) => set({ scoreMode }),
   setSorting: (sorting) => set({ sorting }),
-  selectCollege: (selectedCollegeId) => set({ selectedCollegeId }),
+  // A new campus clears the stay popup.
+  selectCollege: (selectedCollegeId) => set({ selectedCollegeId, selectedStayId: null }),
   applyPreset: (id) => {
     const preset = PRESETS.find((p) => p.id === id)
     if (preset) set(preset.build())
@@ -81,8 +94,9 @@ export function useResults() {
   const filters = useAppStore((s) => s.filters)
   const weights = useAppStore((s) => s.weights)
   const scoreMode = useAppStore((s) => s.scoreMode)
+  const selectedCollegeId = useAppStore((s) => s.selectedCollegeId)
 
-  return useMemo(() => {
+  const colleges = useMemo(() => {
     if (!data) return null
     const cities = data.cities.data
     const outcomes = applyFilters(data.colleges.data, cities, filters)
@@ -99,6 +113,21 @@ export function useResults() {
       impact: matchCount === 0 ? filterImpact(outcomes, filters) : [],
     }
   }, [data, filters, weights, scoreMode])
+
+  // Stays: within the ring of the selected campus, or of any visible campus if none is selected.
+  return useMemo(() => {
+    if (!data || !colleges) return null
+    const live = colleges.rows.filter((r) => !r.excluded)
+    const selectedRow = colleges.rows.find((r) => r.college.id === selectedCollegeId) ?? null
+    const selected = selectedRow
+      ? { id: selectedRow.college.id, lat: selectedRow.college.lat, lng: selectedRow.college.lng }
+      : null
+    const stays = applyStayFilters(data.stays?.data ?? [], filters, {
+      selected,
+      campuses: live.map((r) => ({ id: r.college.id, lat: r.college.lat, lng: r.college.lng })),
+    })
+    return { ...colleges, selected: selectedRow, stays }
+  }, [data, colleges, filters, selectedCollegeId])
 }
 
 export type Results = NonNullable<ReturnType<typeof useResults>>

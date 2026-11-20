@@ -8,9 +8,11 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { changedFilterIds, type FilterId } from '@/lib/filters'
+import { changedStayFilters, DEFAULT_STAY_FILTERS } from '@/lib/stays'
 import { useAppStore } from '@/store/useAppStore'
 import { CityFilters } from './CityFilters'
 import { CollegeFilters } from './CollegeFilters'
+import { StayFilters } from './StayFilters'
 
 const CITY_IDS: FilterId[] = [
   'annualAqiMax',
@@ -21,7 +23,7 @@ const CITY_IDS: FilterId[] = [
   'homeDistanceMaxKm',
 ]
 
-/** Filter groups from SPEC §6.2. Stay filters (C) arrive in Phase 4. */
+/** Filter groups from SPEC §6.2 (A college, B city, C stay). */
 export function FilterPanel() {
   const filters = useAppStore((s) => s.filters)
   const resetFilters = useAppStore((s) => s.resetFilters)
@@ -31,7 +33,10 @@ export function FilterPanel() {
   const cityCount =
     active.filter((id) => CITY_IDS.includes(id)).length + (filters.showExcluded ? 1 : 0)
   const collegeCount = active.length - active.filter((id) => CITY_IDS.includes(id)).length
-  const total = cityCount + collegeCount
+  const stayCount =
+    changedStayFilters(filters).length +
+    (filters.stayMaxDistanceKm !== DEFAULT_STAY_FILTERS.stayMaxDistanceKm ? 1 : 0)
+  const total = cityCount + collegeCount + stayCount
 
   const count = (n: number) =>
     n > 0 && (
@@ -74,9 +79,12 @@ export function FilterPanel() {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="stay">
-              <AccordionTrigger className="text-sm">C. Stay</AccordionTrigger>
-              <AccordionContent className="text-xs text-muted-foreground">
-                Stay filters come in Phase 4. Current stay radius: {filters.stayMaxDistanceKm} km.
+              <AccordionTrigger className="text-sm">
+                <span>C. Stay</span>
+                {count(stayCount)}
+              </AccordionTrigger>
+              <AccordionContent>
+                <StayFilters />
               </AccordionContent>
             </AccordionItem>
           </Accordion>

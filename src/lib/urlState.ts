@@ -3,16 +3,15 @@
  * Only values that differ from the defaults are written, so the default URL stays clean.
  * Parsing is defensive: unknown or invalid values are ignored.
  */
-import type { CollegeType, Confidence, Region } from '@/types/domain'
 import {
   ALL_CONFIDENCE,
   ALL_DURATIONS,
   ALL_REGIONS,
   ALL_TYPES,
   DEFAULT_FILTERS,
-  type DurationKey,
   type FilterState,
 } from './filters'
+import { ALL_FURNISHED, ALL_GENDER, ALL_SHARING, ALL_SOURCES, ALL_STAY_TYPES } from './stays'
 import type { SortState } from './presets'
 import { DEFAULT_WEIGHTS, WEIGHT_KEYS, type ScoreMode, type Weights } from './scoring'
 
@@ -46,12 +45,35 @@ const NUM: Record<string, NumKey> = {
   living: 'livingMin',
   home: 'homeDistanceMaxKm',
   stay: 'stayMaxDistanceKm',
+  smin: 'stayTravelMaxMin',
+  bmin: 'stayBudgetMin',
+  bmax: 'stayBudgetMax',
+  rmin: 'stayRentMin',
+  rmax: 'stayRentMax',
 }
 const BOOL: Record<string, BoolKey> = {
   sf: 'selfFinancingOnly',
   hostel: 'campusHostelOnly',
   excl: 'showExcluded',
+  food: 'stayFoodOnly',
+  ac: 'stayAcOnly',
 }
+
+/** List-valued filters: URL key, field, allowed values. */
+type ListKey = {
+  [K in keyof FilterState]: FilterState[K] extends string[] ? K : never
+}[keyof FilterState]
+const LISTS: [string, ListKey, readonly string[]][] = [
+  ['type', 'types', ALL_TYPES],
+  ['conf', 'placementConfidence', ALL_CONFIDENCE],
+  ['dur', 'durations', ALL_DURATIONS],
+  ['reg', 'regions', ALL_REGIONS],
+  ['st', 'stayTypes', ALL_STAY_TYPES],
+  ['share', 'staySharing', ALL_SHARING],
+  ['furn', 'stayFurnished', ALL_FURNISHED],
+  ['gender', 'stayGender', ALL_GENDER],
+  ['src', 'staySources', ALL_SOURCES],
+]
 
 const sameList = (a: readonly string[], b: readonly string[]) =>
   a.length === b.length && a.every((x, i) => x === b[i])
@@ -64,11 +86,8 @@ export function encodeUrlState(s: UrlState): string {
   const list = (key: string, v: readonly string[], def: readonly string[]) => {
     if (!sameList([...v].sort(), [...def].sort())) p.set(key, v.join(','))
   }
-  list('type', f.types, d.types)
   list('inst', f.instituteIds, d.instituteIds)
-  list('conf', f.placementConfidence, d.placementConfidence)
-  list('dur', f.durations, d.durations)
-  list('reg', f.regions, d.regions)
+  for (const [key, field] of LISTS) list(key, f[field], d[field])
   for (const [key, field] of Object.entries(NUM)) {
     const v = f[field]
     if (v !== d[field] && v !== null) p.set(key, String(v))
@@ -105,13 +124,12 @@ export function decodeUrlState(search: string): UrlState {
   const p = new URLSearchParams(search)
   const filters = structuredClone(DEFAULT_FILTERS) as FilterState
 
-  filters.types = parseList<CollegeType>(p.get('type'), ALL_TYPES) ?? filters.types
   const inst = p.get('inst')
   if (inst !== null) filters.instituteIds = inst.split(',').filter((x) => /^[a-z0-9-]+$/.test(x))
-  filters.placementConfidence =
-    parseList<Confidence>(p.get('conf'), ALL_CONFIDENCE) ?? filters.placementConfidence
-  filters.durations = parseList<DurationKey>(p.get('dur'), ALL_DURATIONS) ?? filters.durations
-  filters.regions = parseList<Region>(p.get('reg'), ALL_REGIONS) ?? filters.regions
+  for (const [key, field, allowed] of LISTS) {
+    const v = parseList(p.get(key), allowed)
+    if (v) (filters[field] as string[]) = v
+  }
 
   for (const [key, field] of Object.entries(NUM)) {
     const n = parseNum(p.get(key))
