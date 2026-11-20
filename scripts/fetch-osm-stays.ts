@@ -4,6 +4,7 @@
  *
  *   npm run data:osm             (uses cached Overpass answers in scripts/.cache when present)
  *   npm run data:osm -- --fresh  (ignore the cache)
+ *   add --force to accept a result with < 50 % of the old row count
  *
  * Rate limits: one query at a time, ≥ 5 s between queries, retries with back-off on 429/504.
  * Data © OpenStreetMap contributors (ODbL).
@@ -14,7 +15,14 @@ import { fileURLToPath } from 'node:url'
 import { fileSchema, StaySchema } from '../src/types/domain.ts'
 import { buildSeed, DATA_DIR } from './seed.ts'
 import { dedupeStays, overpassQuery, toStay } from './osm-stays-lib.ts'
-import { overpass, PAUSE_MS, sleep, type OsmElement } from './overpass.ts'
+import {
+  assertNoBigDrop,
+  countRows,
+  overpass,
+  PAUSE_MS,
+  sleep,
+  type OsmElement,
+} from './overpass.ts'
 
 const DIR = path.dirname(fileURLToPath(import.meta.url))
 const CACHE_DIR = path.join(DIR, '.cache', 'overpass')
@@ -77,7 +85,13 @@ async function main() {
     },
     data,
   })
-  writeFileSync(path.join(DATA_DIR, 'stays.osm.json'), `${JSON.stringify(file)}\n`)
+  const out = path.join(DATA_DIR, 'stays.osm.json')
+  assertNoBigDrop(
+    'stays.osm.json',
+    countRows(out, (j) => (j as { data?: unknown[] }).data?.length ?? 0),
+    data.length,
+  )
+  writeFileSync(out, `${JSON.stringify(file)}\n`)
   const byType = data.reduce<Record<string, number>>(
     (m, s) => ((m[s.type] = (m[s.type] ?? 0) + 1), m),
     {},

@@ -4,6 +4,8 @@
  * elements, e.g. a timeout) are retried with back-off 15 → 240 s; remark answers are never
  * returned as data. Only overpass-api.de was reachable from the owner's machine (2026-11-20).
  */
+import { readFileSync } from 'node:fs'
+
 export type OsmElement = {
   type: 'node' | 'way' | 'relation'
   id: number
@@ -59,4 +61,27 @@ export async function overpass(query: string): Promise<OsmElement[]> {
     throw new Error(`Overpass HTTP ${res.status}: ${(await res.text()).slice(0, 300)}`)
   }
   throw new Error('Overpass: too many retries')
+}
+
+/**
+ * Guard for unattended refreshes (GitHub Actions cron): a busy or partial Overpass answer must
+ * not replace good data. Throws when the new count is below half the old one, unless --force.
+ */
+export function assertNoBigDrop(label: string, oldCount: number, newCount: number): void {
+  if (process.argv.includes('--force')) return
+  if (oldCount > 0 && newCount < oldCount * 0.5) {
+    throw new Error(
+      `${label}: ${newCount} rows now vs ${oldCount} before (< 50 %). Not written. ` +
+        'Check Overpass, or run again with --force to accept.',
+    )
+  }
+}
+
+/** Number of rows in an existing data file (0 when missing or unreadable). */
+export function countRows(file: string, count: (json: unknown) => number): number {
+  try {
+    return count(JSON.parse(readFileSync(file, 'utf8')))
+  } catch {
+    return 0
+  }
 }

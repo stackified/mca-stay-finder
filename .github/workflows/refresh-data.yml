@@ -1,0 +1,93 @@
+# Monthly data refresh (SPEC §14 Phase 8): live-AQI snapshot (Open-Meteo), amenities and stays
+# (Overpass). Each source runs on its own; a failed source keeps its old file. New data is
+# committed only when lint, types, tests and build pass, then the site is redeployed.
+# Overpass politeness lives in the scripts (one query at a time, ≥ 5 s apart, back-off).
+name: Refresh data
+
+on:
+  schedule:
+    - cron: '17 3 1 * *' # 03:17 UTC on the 1st of each month (off the busy :00 minute)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: refresh-data
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Live AQI snapshot (Open-Meteo)
+        id: aqi
+        continue-on-error: true
+        run: npm run data:aqi
+      - name: Amenities (Overpass)
+        id: amenities
+        continue-on-error: true
+        run: npm run data:amenities -- --fresh
+      - name: Stays (Overpass)
+        id: stays
+        continue-on-error: true
+        run: npm run data:osm -- --fresh
+
+      - name: Check the new data
+        run: |
+          npm run data:check
+          npm run lint
+          npm run typecheck
+          npm test
+          npm run build
+
+      - name: Commit changed data
+        id: commit
+        run: |
+          git add public/data
+          if git diff --cached --quiet; then
+            echo "No data changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Data refresh $(date -u +%Y-%m-%d)" \
+            -m "aqi=${{ steps.aqi.outcome }} amenities=${{ steps.amenities.outcome }} stays=${{ steps.stays.outcome }}"
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Data refresh"
+            echo "| Source | Result |"
+            echo "| --- | --- |"
+            echo "| Live AQI snapshot | ${{ steps.aqi.outcome }} |"
+            echo "| Amenities | ${{ steps.amenities.outcome }} |"
+            echo "| Stays | ${{ steps.stays.outcome }} |"
+            echo "| Commit | ${{ steps.commit.outputs.sha || 'none' }} |"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.sha != ''
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: ${{ needs.refresh.outputs.sha }}

@@ -4,12 +4,13 @@
  *
  *   npm run data:amenities             (uses cached Overpass answers when present)
  *   npm run data:amenities -- --fresh
+ *   add --force to accept a result with < 50 % of the old row count
  *
  * Same Overpass client and politeness rules as fetch-osm-stays.ts. Data © OpenStreetMap contributors.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import {
   AMENITY_KINDS,
   AmenitiesFileSchema,
@@ -17,7 +18,14 @@ import {
   type AmenityRow,
 } from '../src/lib/amenities.ts'
 import { haversineKm } from '../src/lib/geo.ts'
-import { overpass, PAUSE_MS, sleep, type OsmElement } from './overpass.ts'
+import {
+  assertNoBigDrop,
+  countRows,
+  overpass,
+  PAUSE_MS,
+  sleep,
+  type OsmElement,
+} from './overpass.ts'
 import { buildSeed, DATA_DIR } from './seed.ts'
 
 const DIR = path.dirname(fileURLToPath(import.meta.url))
@@ -108,15 +116,24 @@ async function main() {
     },
     byCampus,
   })
-  writeFileSync(path.join(DATA_DIR, 'amenities.json'), `${JSON.stringify(file)}\n`)
   const total = Object.values(byCampus).reduce((s, r) => s + r.length, 0)
+  const out = path.join(DATA_DIR, 'amenities.json')
+  assertNoBigDrop(
+    'amenities.json',
+    countRows(out, (j) =>
+      Object.values((j as { byCampus?: Record<string, unknown[]> }).byCampus ?? {}).reduce(
+        (s, r) => s + r.length,
+        0,
+      ),
+    ),
+    total,
+  )
+  writeFileSync(out, `${JSON.stringify(file)}\n`)
   console.log(`wrote public/data/amenities.json: ${total} rows (${queried} Overpass queries)`)
 }
 
-if (
-  process.argv[1] &&
-  import.meta.url === new URL(`file:///${process.argv[1].replace(/\\/g, '/')}`).href
-) {
+// pathToFileURL works on Windows and Linux (GitHub Actions); a hand-built file:/// URL does not.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch((err: unknown) => {
     console.error(err instanceof Error ? err.message : err)
     process.exit(1)

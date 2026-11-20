@@ -45,7 +45,7 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 ## Commands
 
 - `npm run dev` · `npm run build` · `npm test` · `npm run lint` · `npm run typecheck` · `npm run format`
-- Data: `npm run data:seed` (write `public/data/*.json`) · `npm run data:check` (validate only). Later: `data:osm`, `data:all`.
+- Data: `npm run data:seed` (write `public/data/*.json`) · `npm run data:check` (validate only). Also `data:geocode`, `data:osm`, `data:amenities`, `data:aqi`, `data:all` (all three fetches).
 - Seed tables live in `scripts/seed/*.ts`. Edit them, then run `npm run data:seed`. A test fails if the JSON is stale.
 - Scripts run with Node's built-in TypeScript support (`node scripts/x.ts`). Script imports use relative paths with `.ts`; files under `src/` that scripts import (`types/domain.ts`, `lib/naqi.ts`, `lib/geo.ts`) must not use the `@/` alias.
 - tsconfigs: `app` = `src` (browser), `node` = `vite.config.ts` + `scripts`, `test` = `tests` + `scripts` (Node + Vitest types).
@@ -59,17 +59,17 @@ Recharts · TanStack Table · Turf.js · Dexie · zod · Vitest. Data: Overpass,
 
 ## Build phases (SPEC §14) — commit at the end of each
 
-| #   | Phase                                               | Status  |
-| --- | --------------------------------------------------- | ------- |
-| 0   | Setup, 3-column empty layout                        | done    |
-| 1   | Seed data JSON + zod schemas                        | done    |
-| 2   | Map, college markers, AQI circles, legend           | done    |
-| 3   | Filters, scoring, ranked table, URL sync, presets   | done    |
-| 4   | OSM stays, clustering, radius ring, deep links      | done    |
-| 5   | Dexie owner tools, export/import, budget calc       | done    |
-| 6   | Live AQI (Open-Meteo), amenities                    | done    |
-| 7   | Charts, compare, dark mode, mobile, a11y, data-info | done    |
-| 8   | Optional: Actions cron, Pages deploy                | pending |
+| #   | Phase                                               | Status                                   |
+| --- | --------------------------------------------------- | ---------------------------------------- |
+| 0   | Setup, 3-column empty layout                        | done                                     |
+| 1   | Seed data JSON + zod schemas                        | done                                     |
+| 2   | Map, college markers, AQI circles, legend           | done                                     |
+| 3   | Filters, scoring, ranked table, URL sync, presets   | done                                     |
+| 4   | OSM stays, clustering, radius ring, deep links      | done                                     |
+| 5   | Dexie owner tools, export/import, budget calc       | done                                     |
+| 6   | Live AQI (Open-Meteo), amenities                    | done                                     |
+| 7   | Charts, compare, dark mode, mobile, a11y, data-info | done                                     |
+| 8   | Optional: Actions cron, Pages deploy                | built, not deployed (no GitHub repo yet) |
 
 ## Decisions log
 
@@ -170,6 +170,16 @@ Format: date — decision — reason.
 - 2026-11-20 — Badge audit (§13 item 9): Ranked table column headers, Stays cost line, locality ranges and the budget total now carry a confidence badge. Data info dialog ("?" button) lists every dataset with size, last refresh and source, the confidence legend and known caveats.
 - 2026-11-20 — Offline (§13 item 10): hand-written `public/sw.js`, registered in production only. Same-origin files: network first, cache fallback; cached `data/*.json` answers carry `x-sw-cache: 1`, `loadSeedData` sets `fromCache`, and the banner says "app server unreachable" or "you are offline" with the data date. Tiles (OpenFreeMap, OSM): stale-while-revalidate, max 1,500 entries. Tiles loaded before the worker first controls the page are not cached; areas viewed after that are.
 - 2026-11-20 — Verified in the browser: Charts (3 charts, radar with 3 series) and Compare (3 colleges, 30 badges) render; theme cycle and dark map work; mobile 375×812 layout has no sideways scroll, sheets are 80 % high; data info dialog opens. Offline: production preview loaded twice, server stopped, reload → app and all 14 colleges load from cache with the banner. Only `.env.example` is tracked; no keys in the code.
+
+### Phase 8 (Actions cron, Pages deploy)
+
+- 2026-11-20 — `.github/workflows/deploy.yml`: on push to `main` (and manual run, and when called by the refresh workflow): `npm ci` → lint → typecheck → test → build → upload `dist` → `actions/deploy-pages`. Node 24 in CI (`engines` ≥ 22.18, the first version that runs `.ts` scripts without flags). No secrets. One-time setup: repo Settings → Pages → Source = "GitHub Actions". `base: './'` makes the build work on the `/<repo>/` sub-path; the service worker scope follows.
+- 2026-11-20 — `.github/workflows/refresh-data.yml`: cron `17 3 1 * *` (monthly) + manual run. Runs `data:aqi`, `data:amenities -- --fresh` and `data:osm -- --fresh` as separate steps with `continue-on-error` (a failed source keeps its old file: every script fetches everything before it writes). New data is committed by `github-actions[bot]` only after data:check, lint, typecheck, tests and build pass; then it calls deploy.yml with the new commit SHA (a push with `GITHUB_TOKEN` does not start other workflows). The run summary lists each source's result.
+- 2026-11-20 — Shrink guard (`assertNoBigDrop` in `scripts/overpass.ts`): an OSM script refuses to write when the new row count is < 50 % of the old file's count (busy or partial Overpass answers); `--force` accepts it. Unit-tested.
+- 2026-11-20 — Bug fixed: `fetch-osm-amenities.ts` detected "run as main" with a hand-built `file:///` URL, which never matches on Linux (`file:////home/…`), so it would silently do nothing in Actions. Now `pathToFileURL`, like `seed.ts`.
+- 2026-11-20 — New `npm run data:all` = aqi + amenities (fresh) + stays (fresh).
+- 2026-11-20 — Free-tier facts: GitHub Pages on a free account needs a **public** repo; Actions minutes are free on public repos. A public repo publishes all files and the commit author emails.
+- 2026-11-20 — Verified locally: both OSM scripts run from cache (2,178 amenity rows; stays unchanged); YAML parses (Prettier); 250 tests pass. **Not verified:** the workflows on GitHub (no remote yet) and the live URL.
 
 ## Gaps found in SPEC (defaults accepted 2026-11-20)
 
